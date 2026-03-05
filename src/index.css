@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #4CAF50;
+  --background: #F5F7FA;
+  --glass: rgba(255, 255, 255, 0.25);
+  --accent: #00C853;
+}
+
+.dark {
+  --background: #121212;
+  --glass: rgba(0, 0, 0, 0.25);
+}
+
+@layer base {
+  body {
+    @apply bg-background-light text-gray-900 transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-background-dark text-gray-100;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/25 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
+  }
+  .dark .glass-card {
+    @apply bg-black/25 border-white/10;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-xl transition-all duration-300 font-medium active:scale-95;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white/50 backdrop-blur-sm;
+  }
+  .dark .input-field {
+    @apply bg-black/50 border-gray-700;
+  }
+}
+
+/* Smooth page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+}
