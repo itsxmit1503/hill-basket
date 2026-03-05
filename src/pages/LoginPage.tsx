@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Mail, Lock, User, ArrowRight, ShoppingCart } from 'lucide-react';
@@ -15,6 +15,8 @@ const LoginPage: React.FC = () => {
   
   const { login, signup, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ const LoginPage: React.FC = () => {
           if (email === 'admin@1234gmail.com') {
             navigate('/admin');
           } else {
-            navigate('/');
+            navigate(redirect);
           }
         } else {
           setError('Invalid email or password');
@@ -36,7 +38,7 @@ const LoginPage: React.FC = () => {
       } else {
         const success = await signup(name, email, password);
         if (success) {
-          navigate('/');
+          navigate(redirect);
         } else {
           setError('User already exists');
         }

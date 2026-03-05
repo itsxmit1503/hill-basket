@@ -45,7 +45,21 @@ const CheckoutPage: React.FC = () => {
   };
 
   if (items.length === 0) {
-    return <Link to="/products" className="btn-primary">Back to Shop</Link>;
+    return (
+      <div className="container mx-auto px-4 py-20 text-center">
+        <GlassCard className="p-16 max-w-2xl mx-auto">
+          <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-400">
+            <ShoppingBag size={48} />
+          </div>
+          <h2 className="text-3xl font-poppins font-bold mb-4">Your cart is empty</h2>
+          <p className="text-gray-500 mb-10 text-lg">You need to add some fresh groceries to your cart before checking out.</p>
+          <Link to="/products" className="btn-primary inline-flex items-center space-x-2 px-10 py-4 text-lg">
+            <span>Start Shopping</span>
+            <ChevronRight size={20} />
+          </Link>
+        </GlassCard>
+      </div>
+    );
   }
 
   return (

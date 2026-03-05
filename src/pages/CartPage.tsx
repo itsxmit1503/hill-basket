@@ -7,7 +7,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const CartPage: React.FC = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, itemCount } = useCart();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    if (!isAuthenticated) {
+      navigate('/login?redirect=/checkout');
+    } else {
+      navigate('/checkout');
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -140,10 +149,10 @@ const CartPage: React.FC = () => {
             </div>
 
             <button
-              onClick={() => navigate('/checkout')}
+              onClick={handleCheckout}
               className="btn-primary w-full py-5 text-xl font-bold shadow-xl shadow-primary/20 flex items-center justify-center space-x-3 group"
             >
-              <span>Go to Checkout</span>
+              <span>{isAuthenticated ? 'Go to Checkout' : 'Login to Checkout'}</span>
               <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
             </button>
             
