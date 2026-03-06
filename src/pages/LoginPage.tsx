@@ -155,12 +155,6 @@ const LoginPage: React.FC = () => {
               </button>
             </p>
           </div>
-          
-          <div className="mt-4 text-center">
-            <p className="text-xs text-gray-400">
-              Admin Demo: admin@1234gmail.com / admin@1234
-            </p>
-          </div>
         </GlassCard>
       </motion.div>
     </div>
