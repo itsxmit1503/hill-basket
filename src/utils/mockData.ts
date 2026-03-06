@@ -71,3 +71,83 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Clean, ready-to-cook broccoli florets. Great for steaming or stir-frying.'
   }
 ];
+
+export const MOCK_ADDRESSES = [
+  {
+    id: 'a1',
+    type: 'Home',
+    street: '123 Maple Avenue',
+    city: 'Springfield',
+    state: 'IL',
+    zip: '62704',
+    isDefault: true
+  },
+  {
+    id: 'a2',
+    type: 'Work',
+    street: '456 Business Center Dr',
+    city: 'Springfield',
+    state: 'IL',
+    zip: '62701',
+    isDefault: false
+  }
+];
+
+export const MOCK_ORDERS = [
+  {
+    id: 'ORD-9872',
+    date: '2024-03-01',
+    status: 'Delivered',
+    total: 42.50,
+    items: [
+      { name: 'Organic Red Apples', quantity: 2, price: 4.99 },
+      { name: 'Whole Milk (1L)', quantity: 1, price: 1.89 }
+    ]
+  },
+  {
+    id: 'ORD-9845',
+    date: '2024-02-15',
+    status: 'Delivered',
+    total: 18.25,
+    items: [
+      { name: 'Butter Croissants', quantity: 1, price: 3.99 },
+      { name: 'Fresh Spinach', quantity: 2, price: 2.49 }
+    ]
+  }
+];
+
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: 'n1',
+    title: 'Order Delivered',
+    message: 'Your order #ORD-9872 has been delivered successfully.',
+    time: '2 hours ago',
+    read: false,
+    type: 'order'
+  },
+  {
+    id: 'n2',
+    title: 'Flash Sale!',
+    message: 'Get 20% off on all organic fruits today.',
+    time: '5 hours ago',
+    read: true,
+    type: 'promo'
+  }
+];
+
+export const MOCK_REVIEWS = [
+  {
+    id: 'r1',
+    productName: 'Organic Red Apples',
+    rating: 5,
+    comment: 'Best apples I have ever tasted! So fresh.',
+    date: '2024-02-20'
+  },
+  {
+    id: 'r2',
+    productName: 'Fresh Spinach',
+    rating: 4,
+    comment: 'Very fresh, but the bag was a bit small.',
+    date: '2024-02-18'
+  }
+];
