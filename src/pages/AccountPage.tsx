@@ -9,10 +9,120 @@ import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 const AccountPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { wishlist, removeFromWishlist, addToCart } = useCart();
   const [activeTab, setActiveTab] = useState('profile');
+  
+  // Profile Form State
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    dob: user?.dob || ''
+  });
+
+  // Address Management State
+  const [addresses, setAddresses] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem('user_addresses');
+      return saved ? JSON.parse(saved) : MOCK_ADDRESSES;
+    } catch {
+      return MOCK_ADDRESSES;
+    }
+  });
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<string | null>(null);
+  const [addressForm, setAddressForm] = useState({
+    type: 'Home',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    isDefault: false
+  });
+
+  // Save addresses to localStorage
+  React.useEffect(() => {
+    localStorage.setItem('user_addresses', JSON.stringify(addresses));
+  }, [addresses]);
+
+  const handleAddressSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (editingAddress) {
+      // Update existing address
+      setAddresses(prev => prev.map(addr => {
+        if (addr.id === editingAddress) {
+          // If setting as default, remove default from others
+          if (addressForm.isDefault) {
+            prev.forEach(a => a.isDefault = false);
+          }
+          return { ...addr, ...addressForm, id: editingAddress };
+        }
+        return addressForm.isDefault ? { ...addr, isDefault: false } : addr;
+      }));
+      setEditingAddress(null);
+    } else {
+      // Add new address
+      const newAddress = {
+        ...addressForm,
+        id: Math.random().toString(36).substr(2, 9)
+      };
+      
+      if (newAddress.isDefault) {
+        setAddresses(prev => prev.map(a => ({ ...a, isDefault: false })));
+      }
+      
+      setAddresses(prev => [...prev, newAddress]);
+    }
+    
+    // Reset form
+    setAddressForm({
+      type: 'Home',
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      isDefault: false
+    });
+    setIsAddingAddress(false);
+  };
+
+  const handleDeleteAddress = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this address?')) {
+      setAddresses(prev => prev.filter(a => a.id !== id));
+    }
+  };
+
+  const startEditAddress = (addr: any) => {
+    setAddressForm({
+      type: addr.type,
+      street: addr.street,
+      city: addr.city,
+      state: addr.state,
+      zip: addr.zip,
+      isDefault: addr.isDefault
+    });
+    setEditingAddress(addr.id);
+    setIsAddingAddress(true);
+  };
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsEditingProfile(true);
+    try {
+      await updateUser(profileData);
+      // Optional: Show success message
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Failed to update profile', error);
+      alert('Failed to update profile. Please try again.');
+    } finally {
+      setIsEditingProfile(false);
+    }
+  };
 
   const menuItems = [
     { id: 'profile', label: 'Edit Profile', icon: <User size={20} /> },
@@ -97,71 +207,214 @@ const AccountPage: React.FC = () => {
 
               {activeTab === 'profile' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
-                      <input type="text" defaultValue={user?.name} className="input-field py-4 font-bold" />
+                  <form onSubmit={handleProfileUpdate}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                        <input 
+                          type="text" 
+                          value={profileData.name} 
+                          onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                          className="input-field py-4 font-bold" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                        <input 
+                          type="email" 
+                          value={profileData.email} 
+                          onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                          className="input-field py-4 font-bold" 
+                          disabled
+                        />
+                        <p className="text-xs text-gray-400 ml-1">Email cannot be changed</p>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                        <input 
+                          type="tel" 
+                          placeholder="+1 (234) 567-890" 
+                          value={profileData.phone}
+                          onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                          className="input-field py-4 font-bold" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Birthday</label>
+                        <input 
+                          type="date" 
+                          value={profileData.dob}
+                          onChange={(e) => setProfileData({...profileData, dob: e.target.value})}
+                          className="input-field py-4 font-bold" 
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
-                      <input type="email" defaultValue={user?.email} className="input-field py-4 font-bold" />
+                    <div className="pt-10 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+                      <button 
+                        type="submit" 
+                        className="btn-primary px-12 py-4 text-lg font-bold disabled:opacity-50"
+                        disabled={isEditingProfile}
+                      >
+                        {isEditingProfile ? 'Saving...' : 'Save Changes'}
+                      </button>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
-                      <input type="tel" placeholder="+1 (234) 567-890" className="input-field py-4 font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Birthday</label>
-                      <input type="date" className="input-field py-4 font-bold" />
-                    </div>
-                  </div>
-                  <div className="pt-10 border-t border-gray-100 dark:border-gray-800 flex justify-end">
-                    <button className="btn-primary px-12 py-4 text-lg font-bold">Save Changes</button>
-                  </div>
+                  </form>
                 </motion.div>
               )}
 
               {activeTab === 'addresses' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold">Your Saved Addresses</h3>
-                    <button className="flex items-center space-x-2 text-primary font-bold hover:underline">
-                      <Plus size={18} />
-                      <span>Add New Address</span>
-                    </button>
-                  </div>
-                  {MOCK_ADDRESSES.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {MOCK_ADDRESSES.map((addr) => (
-                        <GlassCard key={addr.id} className={`p-6 border-2 transition-all ${addr.isDefault ? 'border-primary' : 'border-transparent'}`}>
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center space-x-2">
-                              <MapPin size={18} className="text-primary" />
-                              <span className="font-bold text-lg">{addr.type}</span>
-                              {addr.isDefault && (
-                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Default</span>
-                              )}
-                            </div>
-                            <div className="flex space-x-2">
-                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-primary">
-                                <Edit2 size={16} />
-                              </button>
-                              <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-400 hover:text-red-500">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-gray-600 dark:text-gray-400 font-medium">
-                            {addr.street}<br />
-                            {addr.city}, {addr.state} {addr.zip}
-                          </p>
-                        </GlassCard>
-                      ))}
-                    </div>
+                  {!isAddingAddress ? (
+                    <>
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold">Your Saved Addresses</h3>
+                        <button 
+                          onClick={() => {
+                            setAddressForm({
+                              type: 'Home',
+                              street: '',
+                              city: '',
+                              state: '',
+                              zip: '',
+                              isDefault: false
+                            });
+                            setEditingAddress(null);
+                            setIsAddingAddress(true);
+                          }}
+                          className="flex items-center space-x-2 text-primary font-bold hover:underline"
+                        >
+                          <Plus size={18} />
+                          <span>Add New Address</span>
+                        </button>
+                      </div>
+                      {addresses.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {addresses.map((addr) => (
+                            <GlassCard key={addr.id} className={`p-6 border-2 transition-all ${addr.isDefault ? 'border-primary' : 'border-transparent'}`}>
+                              <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center space-x-2">
+                                  <MapPin size={18} className="text-primary" />
+                                  <span className="font-bold text-lg">{addr.type}</span>
+                                  {addr.isDefault && (
+                                    <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Default</span>
+                                  )}
+                                </div>
+                                <div className="flex space-x-2">
+                                  <button 
+                                    onClick={() => startEditAddress(addr)}
+                                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-primary"
+                                  >
+                                    <Edit2 size={16} />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteAddress(addr.id)}
+                                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-400 hover:text-red-500"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              </div>
+                              <p className="text-gray-600 dark:text-gray-400 font-medium">
+                                {addr.street}<br />
+                                {addr.city}, {addr.state} {addr.zip}
+                              </p>
+                            </GlassCard>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                          No saved addresses found.
+                        </div>
+                      )}
+                    </>
                   ) : (
-                    <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
-                      No saved addresses found.
-                    </div>
+                    <GlassCard className="p-8">
+                      <h3 className="text-xl font-bold mb-6">{editingAddress ? 'Edit Address' : 'Add New Address'}</h3>
+                      <form onSubmit={handleAddressSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Address Type</label>
+                            <select 
+                              value={addressForm.type}
+                              onChange={(e) => setAddressForm({...addressForm, type: e.target.value})}
+                              className="input-field py-3 font-bold"
+                            >
+                              <option value="Home">Home</option>
+                              <option value="Work">Work</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">Street Address</label>
+                            <input 
+                              type="text" 
+                              required
+                              value={addressForm.street}
+                              onChange={(e) => setAddressForm({...addressForm, street: e.target.value})}
+                              className="input-field py-3 font-bold"
+                              placeholder="123 Main St"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">City</label>
+                            <input 
+                              type="text" 
+                              required
+                              value={addressForm.city}
+                              onChange={(e) => setAddressForm({...addressForm, city: e.target.value})}
+                              className="input-field py-3 font-bold"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">State</label>
+                            <input 
+                              type="text" 
+                              required
+                              value={addressForm.state}
+                              onChange={(e) => setAddressForm({...addressForm, state: e.target.value})}
+                              className="input-field py-3 font-bold"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-widest ml-1">ZIP Code</label>
+                            <input 
+                              type="text" 
+                              required
+                              value={addressForm.zip}
+                              onChange={(e) => setAddressForm({...addressForm, zip: e.target.value})}
+                              className="input-field py-3 font-bold"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-3">
+                          <input 
+                            type="checkbox" 
+                            id="default-address"
+                            checked={addressForm.isDefault}
+                            onChange={(e) => setAddressForm({...addressForm, isDefault: e.target.checked})}
+                            className="w-5 h-5 rounded text-primary focus:ring-primary border-gray-300"
+                          />
+                          <label htmlFor="default-address" className="font-bold cursor-pointer">Set as default address</label>
+                        </div>
+
+                        <div className="flex justify-end space-x-4 pt-4">
+                          <button 
+                            type="button"
+                            onClick={() => setIsAddingAddress(false)}
+                            className="px-6 py-3 font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            type="submit"
+                            className="btn-primary px-8 py-3 font-bold"
+                          >
+                            Save Address
+                          </button>
+                        </div>
+                      </form>
+                    </GlassCard>
                   )}
                 </motion.div>
               )}

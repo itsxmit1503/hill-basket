@@ -6,12 +6,15 @@ export interface User {
   name: string;
   role: 'admin' | 'user';
   address?: string;
+  phone?: string;
+  dob?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   signup: (name: string, email: string, password: string) => Promise<boolean>;
+  updateUser: (data: Partial<User>) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -55,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const foundUser = users.find((u: any) => u.email === email && u.password === password);
     
     if (foundUser) {
-      setUser({ id: foundUser.id, email: foundUser.email, name: foundUser.name, role: 'user' });
+      setUser({ id: foundUser.id, email: foundUser.email, name: foundUser.name, role: 'user', phone: foundUser.phone, dob: foundUser.dob });
       return true;
     }
     
@@ -74,6 +77,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
+  const updateUser = async (data: Partial<User>): Promise<boolean> => {
+    if (!user) return false;
+    
+    const updatedUser = { ...user, ...data };
+    setUser(updatedUser);
+    
+    // Update in "database" (localStorage)
+    if (user.role !== 'admin') {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const updatedUsers = users.map((u: any) => u.id === user.id ? { ...u, ...data } : u);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+    }
+    
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
   };
@@ -83,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user, 
       login, 
       signup, 
+      updateUser,
       logout, 
       isAuthenticated: !!user,
       isAdmin: user?.role === 'admin'
