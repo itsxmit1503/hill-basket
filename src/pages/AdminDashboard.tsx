@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { LayoutDashboard, ShoppingBag, Users, Ticket, LifeBuoy, TrendingUp, DollarSign, Package, AlertCircle, Plus, Edit2, Trash2, CheckCircle2, Search, Filter, ArrowUpRight, ArrowDownRight, MoreHorizontal, Sun, Moon, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, Ticket, LifeBuoy, TrendingUp, DollarSign, Package, AlertCircle, Plus, Edit2, Trash2, CheckCircle2, Search, Filter, ArrowUpRight, ArrowDownRight, MoreHorizontal, Sun, Moon, LogOut, Star, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -47,13 +47,6 @@ const AdminDashboard: React.FC = () => {
     { id: 'coupons', label: 'Coupons', icon: <Ticket size={20} /> },
     { id: 'tickets', label: 'Support Tickets', icon: <LifeBuoy size={20} /> },
   ];
-
-  // Fix for blank screen: ensure products is initialized before rendering
-  useEffect(() => {
-    if (products.length === 0) {
-      setProducts(INITIAL_PRODUCTS);
-    }
-  }, []);
 
   const handleDeleteProduct = (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -262,57 +255,65 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {filteredProducts.map((product) => (
-                        <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
-                          <td className="p-6">
-                            <div className="flex items-center space-x-4">
-                              <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-2xl p-2 border border-gray-100 dark:border-gray-600 shrink-0">
-                                <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                      {filteredProducts?.length > 0 ? (
+                        filteredProducts.map((product) => (
+                          <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                            <td className="p-6">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-2xl p-2 border border-gray-100 dark:border-gray-600 shrink-0">
+                                  <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-black text-gray-800 dark:text-white truncate">{product.name}</p>
+                                  <p className="text-xs text-gray-400 truncate max-w-[200px]">{product.description}</p>
+                                </div>
                               </div>
-                              <div className="min-w-0">
-                                <p className="font-black text-gray-800 dark:text-white truncate">{product.name}</p>
-                                <p className="text-xs text-gray-400 truncate max-w-[200px]">{product.description}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-6">
-                            <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                              {product.category}
-                            </span>
-                          </td>
-                          <td className="p-6 font-black text-lg text-primary">${product.price.toFixed(2)}</td>
-                          <td className="p-6">
-                            <button
-                              onClick={() => toggleStock(product.id)}
-                              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${product.stockStatus === 'In Stock' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}
-                            >
-                              {product.stockStatus}
-                            </button>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center space-x-1 text-yellow-500 font-black">
-                              <Star size={14} fill="currentColor" />
-                              <span>{product.rating}</span>
-                            </div>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center justify-center space-x-2">
-                              <button className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
-                                <Edit2 size={18} />
-                              </button>
+                            </td>
+                            <td className="p-6">
+                              <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20">
+                                {product.category}
+                              </span>
+                            </td>
+                            <td className="p-6 font-black text-lg text-primary">${product.price?.toFixed(2) || '0.00'}</td>
+                            <td className="p-6">
                               <button
-                                onClick={() => handleDeleteProduct(product.id)}
-                                className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                                onClick={() => toggleStock(product.id)}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${product.stockStatus === 'In Stock' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}
                               >
-                                <Trash2 size={18} />
+                                {product.stockStatus}
                               </button>
-                              <button className="p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
-                                <MoreHorizontal size={18} />
-                              </button>
-                            </div>
+                            </td>
+                            <td className="p-6">
+                              <div className="flex items-center space-x-1 text-yellow-500 font-black">
+                                <Star size={14} fill="currentColor" />
+                                <span>{product.rating || '0'}</span>
+                              </div>
+                            </td>
+                            <td className="p-6">
+                              <div className="flex items-center justify-center space-x-2">
+                                <button className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
+                                  <Edit2 size={18} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteProduct(product.id)}
+                                  className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                                <button className="p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                                  <MoreHorizontal size={18} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="p-10 text-center text-gray-400 font-bold">
+                            No products found matching your search.
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -585,6 +586,76 @@ const AdminDashboard: React.FC = () => {
                   </GlassCard>
                 ))}
               </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'tickets' && (
+            <motion.div
+              key="tickets"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="space-y-8"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-3xl font-poppins font-black">Support Panel</h3>
+                <div className="flex items-center space-x-4">
+                  <span className="px-4 py-2 bg-red-500/10 text-red-500 rounded-full text-xs font-black uppercase tracking-widest border border-red-500/20">
+                    {tickets.filter(t => t.status === 'Open').length} Active Tickets
+                  </span>
+                </div>
+              </div>
+
+              {tickets.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {tickets.map((ticket) => (
+                    <GlassCard key={ticket.id} className="p-8 group hover:border-primary/50 transition-all duration-500">
+                      <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{ticket.id}</p>
+                          <h4 className="text-xl font-poppins font-black text-gray-800 dark:text-white">{ticket.subject}</h4>
+                        </div>
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${ticket.status === 'Open' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500/10 text-green-500 border border-green-500/20'}`}>
+                          {ticket.status}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-4 mb-8">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-400">
+                            <Users size={18} />
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm">{ticket.name}</p>
+                            <p className="text-xs text-gray-500">{ticket.email}</p>
+                          </div>
+                        </div>
+                        <p className="text-gray-500 text-sm leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl italic">
+                          "{ticket.message}"
+                        </p>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <button className="btn-primary flex-1 py-3 text-sm font-black flex items-center justify-center space-x-2">
+                          <MessageSquare size={16} />
+                          <span>Respond</span>
+                        </button>
+                        <button className="p-3 bg-green-500/10 text-green-500 rounded-xl hover:bg-green-500 hover:text-white transition-all border border-green-500/20">
+                          <CheckCircle2 size={20} />
+                        </button>
+                      </div>
+                    </GlassCard>
+                  ))}
+                </div>
+              ) : (
+                <GlassCard className="p-20 text-center border-none shadow-2xl">
+                  <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-8 shadow-xl">
+                    <CheckCircle2 size={48} />
+                  </div>
+                  <h2 className="text-3xl font-poppins font-black mb-4">No Active Tickets</h2>
+                  <p className="text-gray-500 max-w-sm mx-auto font-medium">Everything is under control! Your customers are currently happy with the service.</p>
+                </GlassCard>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
