@@ -1,74 +1,188 @@
 import { Product } from '../context/CartContext';
 
 export const CATEGORIES = [
-  { id: '1', name: 'Fruits', icon: '🍎', color: 'bg-red-50 text-red-600' },
-  { id: '2', name: 'Vegetables', icon: '🥦', color: 'bg-green-50 text-green-600' },
-  { id: '3', name: 'Dairy', icon: '🥛', color: 'bg-blue-50 text-blue-600' },
-  { id: '4', name: 'Bakery', icon: '🥐', color: 'bg-yellow-50 text-yellow-600' },
-  { id: '5', name: 'Meat', icon: '🥩', color: 'bg-orange-50 text-orange-600' },
-  { id: '6', name: 'Beverages', icon: '🥤', color: 'bg-purple-50 text-purple-600' },
+  { id: '1', name: 'Energy Drink', icon: '⚡', color: 'bg-yellow-50 text-yellow-600' },
+  { id: '2', name: 'Rice', icon: '🌾', color: 'bg-orange-50 text-orange-600' },
+  { id: '3', name: 'Dry Fruits', icon: '🥜', color: 'bg-amber-50 text-amber-600' },
+  { id: '4', name: 'Biscuits', icon: '🍪', color: 'bg-brown-50 text-amber-900' },
+  { id: '5', name: 'Juice', icon: '🧃', color: 'bg-red-50 text-red-600' },
 ];
 
 export const INITIAL_PRODUCTS: Product[] = [
+  // Energy Drinks
   {
     id: 'p1',
-    name: 'Organic Red Apples',
-    price: 4.99,
-    category: 'Fruits',
-    image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?w=400&q=80',
+    name: 'Red Bull Energy Drink',
+    price: 1.99,
+    category: 'Energy Drink',
+    image: 'https://images.unsplash.com/photo-1622543925917-763c34d15384?w=400&q=80',
     stockStatus: 'In Stock',
     rating: 4.8,
-    description: 'Fresh, crispy organic red apples from local orchards. High in fiber and vitamins.'
+    description: 'Vitalizes body and mind. High caffeine content.'
   },
   {
     id: 'p2',
-    name: 'Fresh Spinach',
+    name: 'Monster Energy Drink',
     price: 2.49,
-    category: 'Vegetables',
-    image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&q=80',
+    category: 'Energy Drink',
+    image: 'https://images.unsplash.com/photo-1625505704077-336783d7f950?w=400&q=80',
     stockStatus: 'In Stock',
-    rating: 4.5,
-    description: 'Freshly harvested baby spinach leaves. Perfect for salads and smoothies.'
+    rating: 4.7,
+    description: 'Tear into a can of the meanest energy drink on the planet.'
   },
   {
     id: 'p3',
-    name: 'Whole Milk (1L)',
-    price: 1.89,
-    category: 'Dairy',
-    image: 'https://images.unsplash.com/photo-1563636619-e910ef49e9d3?w=400&q=80',
+    name: 'Prime Hydration Drink',
+    price: 2.99,
+    category: 'Energy Drink',
+    image: 'https://images.unsplash.com/photo-1695462512693-e57929a008c3?w=400&q=80',
     stockStatus: 'In Stock',
     rating: 4.9,
-    description: 'Pasteurized whole milk from grass-fed cows. Rich in calcium and nutrients.'
+    description: 'Prime Hydration is a better-for-you hydration option.'
   },
   {
     id: 'p4',
-    name: 'Butter Croissants',
-    price: 3.99,
-    category: 'Bakery',
-    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80',
+    name: 'Hell Energy Drink',
+    price: 1.49,
+    category: 'Energy Drink',
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&q=80',
     stockStatus: 'In Stock',
-    rating: 4.7,
-    description: 'Flaky, buttery croissants baked fresh daily. Pack of 4.'
+    rating: 4.5,
+    description: 'Active lifestyle energy drink with vitamins.'
   },
+  // Rice
   {
     id: 'p5',
-    name: 'Organic Bananas',
-    price: 1.29,
-    category: 'Fruits',
-    image: 'https://images.unsplash.com/photo-1571771894821-ad996211fdf4?w=400&q=80',
+    name: 'India Gate Basmati Rice',
+    price: 12.99,
+    category: 'Rice',
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
     stockStatus: 'In Stock',
-    rating: 4.6,
-    description: 'Premium organic bananas, perfectly ripened and sweet.'
+    rating: 4.9,
+    description: 'Premium aged Basmati rice with long grains and rich aroma.'
   },
   {
     id: 'p6',
-    name: 'Broccoli Florets',
+    name: 'Silver Rice',
+    price: 8.49,
+    category: 'Rice',
+    image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.6,
+    description: 'High-quality polished white rice for daily use.'
+  },
+  {
+    id: 'p7',
+    name: 'Dawat Basmati Rice',
+    price: 11.49,
+    category: 'Rice',
+    image: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.8,
+    description: 'Authentic Basmati rice known for its exceptional taste.'
+  },
+  // Dry Fruits
+  {
+    id: 'p8',
+    name: 'Premium Almonds',
+    price: 14.99,
+    category: 'Dry Fruits',
+    image: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.9,
+    description: 'California almonds, rich in protein and Vitamin E.'
+  },
+  {
+    id: 'p9',
+    name: 'Roasted Cashews',
+    price: 16.49,
+    category: 'Dry Fruits',
+    image: 'https://images.unsplash.com/photo-1558961363-fa4f2323a22d?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.8,
+    description: 'Creamy and crunchy roasted cashews, perfect for snacking.'
+  },
+  {
+    id: 'p10',
+    name: 'Crunchy Peanuts',
+    price: 5.99,
+    category: 'Dry Fruits',
+    image: 'https://images.unsplash.com/photo-1567333090944-10477ce74677?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.5,
+    description: 'Nutritious and delicious peanuts, roasted to perfection.'
+  },
+  // Biscuits
+  {
+    id: 'p11',
+    name: 'Marie Gold Biscuits',
+    price: 0.99,
+    category: 'Biscuits',
+    image: 'https://images.unsplash.com/photo-1558961363-fa4f2323a22d?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.6,
+    description: 'Crispy and light tea-time biscuits.'
+  },
+  {
+    id: 'p12',
+    name: '50-50 Biscuits',
+    price: 1.29,
+    category: 'Biscuits',
+    image: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.7,
+    description: 'The perfect blend of sweet and salty.'
+  },
+  {
+    id: 'p13',
+    name: 'Milk Bikies',
+    price: 1.49,
+    category: 'Biscuits',
+    image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.8,
+    description: 'Delicious milk-enriched biscuits for kids.'
+  },
+  {
+    id: 'p14',
+    name: 'Digestive Biscuits',
+    price: 2.49,
+    category: 'Biscuits',
+    image: 'https://images.unsplash.com/photo-1532117182044-031e7da8965d?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.5,
+    description: 'High-fiber biscuits for better digestion.'
+  },
+  // Juice
+  {
+    id: 'p15',
+    name: 'Real Cranberry Juice',
+    price: 3.49,
+    category: 'Juice',
+    image: 'https://images.unsplash.com/photo-1563223552-30d01fda3ea6?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.7,
+    description: '100% natural cranberry juice, rich in antioxidants.'
+  },
+  {
+    id: 'p16',
+    name: 'Pomegranate Juice',
+    price: 4.29,
+    category: 'Juice',
+    image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.8,
+    description: 'Freshly squeezed pomegranate juice, packed with vitamins.'
+  },
+  {
+    id: 'p17',
+    name: 'Mango Juice',
     price: 2.99,
-    category: 'Vegetables',
-    image: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400&q=80',
-    stockStatus: 'Out of Stock',
-    rating: 4.4,
-    description: 'Clean, ready-to-cook broccoli florets. Great for steaming or stir-frying.'
+    category: 'Juice',
+    image: 'https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80',
+    stockStatus: 'In Stock',
+    rating: 4.9,
+    description: 'Sweet and luscious mango nectar from selected mangoes.'
   }
 ];
 
