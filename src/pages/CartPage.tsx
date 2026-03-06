@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Ticket, Truck, ShieldCheck, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
