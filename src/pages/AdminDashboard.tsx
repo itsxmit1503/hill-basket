@@ -17,6 +17,11 @@ const AdminDashboard: React.FC = () => {
   const [tickets, setTickets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Clear search query when switching tabs to prevent blank screens due to active filters
+  useEffect(() => {
+    setSearchQuery('');
+  }, [activeTab]);
+  
   useEffect(() => {
     const savedTickets = JSON.parse(localStorage.getItem('support_tickets') || '[]');
     setTickets(savedTickets);
@@ -42,6 +47,13 @@ const AdminDashboard: React.FC = () => {
     { id: 'coupons', label: 'Coupons', icon: <Ticket size={20} /> },
     { id: 'tickets', label: 'Support Tickets', icon: <LifeBuoy size={20} /> },
   ];
+
+  // Fix for blank screen: ensure products is initialized before rendering
+  useEffect(() => {
+    if (products.length === 0) {
+      setProducts(INITIAL_PRODUCTS);
+    }
+  }, []);
 
   const handleDeleteProduct = (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
