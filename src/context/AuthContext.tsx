@@ -15,6 +15,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   updateUser: (data: Partial<User>) => Promise<boolean>;
+  resetPassword: (email: string, newPassword: string) => Promise<boolean>;
+  checkEmailExists: (email: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -93,6 +95,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
+  const checkEmailExists = async (email: string): Promise<boolean> => {
+    // Check admin
+    if (email === ADMIN_CREDENTIALS.email) return true;
+    
+    // Check users
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    return users.some((u: any) => u.email === email);
+  };
+
+  const resetPassword = async (email: string, newPassword: string): Promise<boolean> => {
+    if (email === ADMIN_CREDENTIALS.email) {
+      // Cannot reset admin password in this mock
+      return false;
+    }
+    
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const userIndex = users.findIndex((u: any) => u.email === email);
+    
+    if (userIndex === -1) return false;
+    
+    users[userIndex].password = newPassword;
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
   };
@@ -103,6 +131,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       login, 
       signup, 
       updateUser,
+      resetPassword,
+      checkEmailExists,
       logout, 
       isAuthenticated: !!user,
       isAdmin: user?.role === 'admin'
