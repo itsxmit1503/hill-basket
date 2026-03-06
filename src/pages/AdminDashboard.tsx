@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { INITIAL_PRODUCTS } from '../utils/mockData';
+import { INITIAL_PRODUCTS, MOCK_ADMIN_USERS, MOCK_ADMIN_COUPONS, MOCK_ADMIN_ORDERS } from '../utils/mockData';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -15,11 +15,17 @@ const AdminDashboard: React.FC = () => {
   
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
   const [tickets, setTickets] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   
   useEffect(() => {
     const savedTickets = JSON.parse(localStorage.getItem('support_tickets') || '[]');
     setTickets(savedTickets);
   }, []);
+
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const stats = [
     { label: 'Total Revenue', value: '$12,450.00', change: '+12.5%', icon: <DollarSign className="text-primary" />, trend: 'up' },
@@ -119,6 +125,8 @@ const AdminDashboard: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search everything..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full md:w-80 bg-white dark:bg-gray-900 border-none rounded-2xl py-4 px-12 shadow-xl focus:ring-4 focus:ring-primary/20 transition-all font-bold"
               />
             </div>
@@ -242,7 +250,7 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {products.map((product) => (
+                      {filteredProducts.map((product) => (
                         <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
                           <td className="p-6">
                             <div className="flex items-center space-x-4">
@@ -370,18 +378,201 @@ const AdminDashboard: React.FC = () => {
             </motion.div>
           )}
 
-          {['orders', 'users', 'coupons'].includes(activeTab) && (
+          {activeTab === 'orders' && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center h-[500px] text-center"
+              key="orders"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-8"
             >
-              <div className="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-[40px] flex items-center justify-center text-gray-300 mb-8 shadow-2xl">
-                <LayoutDashboard size={48} className="animate-spin-slow" />
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-3xl font-poppins font-black">Manage Orders</h3>
+                <div className="flex gap-4">
+                  <select className="bg-white dark:bg-gray-900 border-none rounded-xl px-4 py-2 font-bold shadow-xl">
+                    <option>All Status</option>
+                    <option>Pending</option>
+                    <option>Processing</option>
+                    <option>Delivered</option>
+                    <option>Cancelled</option>
+                  </select>
+                </div>
               </div>
-              <h2 className="text-4xl font-poppins font-black mb-4 capitalize">{activeTab} Section</h2>
-              <p className="text-gray-500 text-xl max-w-md font-medium">We're finalizing the management interface for this section. Coming soon!</p>
-              <button onClick={() => setActiveTab('overview')} className="btn-primary mt-10 px-10 py-4 text-lg font-bold">Back to Overview</button>
+
+              <GlassCard className="overflow-hidden border-none shadow-2xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-gray-800/50">
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Order ID</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Customer</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Items</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Total</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Date</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                      {MOCK_ADMIN_ORDERS.map((order) => (
+                        <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                          <td className="p-6 font-black">{order.id}</td>
+                          <td className="p-6 font-bold">{order.customer}</td>
+                          <td className="p-6 font-medium">{order.items} items</td>
+                          <td className="p-6 font-black text-primary">${order.total.toFixed(2)}</td>
+                          <td className="p-6 text-gray-500 font-medium">{order.date}</td>
+                          <td className="p-6">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                              order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
+                              order.status === 'Processing' ? 'bg-blue-100 text-blue-600' :
+                              order.status === 'Pending' ? 'bg-yellow-100 text-yellow-600' :
+                              'bg-red-100 text-red-600'
+                            }`}>
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="p-6">
+                            <div className="flex items-center justify-center space-x-2">
+                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                <Edit2 size={16} />
+                              </button>
+                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                <MoreHorizontal size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </GlassCard>
+            </motion.div>
+          )}
+
+          {activeTab === 'users' && (
+            <motion.div
+              key="users"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-3xl font-poppins font-black">User Management</h3>
+              </div>
+
+              <GlassCard className="overflow-hidden border-none shadow-2xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-gray-800/50">
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">User</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Role</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Orders</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Spent</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                        <th className="p-6 text-xs font-black uppercase tracking-[0.2em] text-gray-400 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                      {MOCK_ADMIN_USERS.map((u) => (
+                        <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                          <td className="p-6">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black uppercase">
+                                {u.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="font-black">{u.name}</p>
+                                <p className="text-xs text-gray-400">{u.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-6">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.role === 'Admin' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'}`}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="p-6 font-bold">{u.orders}</td>
+                          <td className="p-6 font-black text-primary">${u.spent.toFixed(2)}</td>
+                          <td className="p-6">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                              {u.status}
+                            </span>
+                          </td>
+                          <td className="p-6">
+                            <div className="flex items-center justify-center space-x-2">
+                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                <AlertCircle size={16} />
+                              </button>
+                              <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </GlassCard>
+            </motion.div>
+          )}
+
+          {activeTab === 'coupons' && (
+            <motion.div
+              key="coupons"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="space-y-8"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-3xl font-poppins font-black">Coupons & Offers</h3>
+                <button className="btn-primary py-3 px-6 flex items-center space-x-2 shadow-xl">
+                  <Plus size={20} />
+                  <span>Create Coupon</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {MOCK_ADMIN_COUPONS.map((coupon) => (
+                  <GlassCard key={coupon.id} className="p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${coupon.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                        {coupon.status}
+                      </span>
+                    </div>
+                    <div className="mb-6">
+                      <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">{coupon.type}</p>
+                      <h4 className="text-3xl font-poppins font-black text-primary">{coupon.code}</h4>
+                    </div>
+                    <div className="space-y-3 mb-8">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className="text-gray-400">Discount</span>
+                        <span className="text-green-500">{coupon.discount} OFF</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className="text-gray-400">Usage</span>
+                        <span>{coupon.usage}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className="text-gray-400">Expires</span>
+                        <span className="text-red-400">{coupon.expiry}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button className="flex-1 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+                        Edit
+                      </button>
+                      <button className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -151,3 +151,23 @@ export const MOCK_REVIEWS = [
     date: '2024-02-18'
   }
 ];
+
+export const MOCK_ADMIN_USERS = [
+  { id: 'u1', name: 'John Doe', email: 'john@example.com', role: 'Customer', orders: 12, spent: 450.00, status: 'Active' },
+  { id: 'u2', name: 'Jane Smith', email: 'jane@example.com', role: 'Customer', orders: 8, spent: 320.50, status: 'Active' },
+  { id: 'u3', name: 'Mike Ross', email: 'mike@example.com', role: 'Admin', orders: 0, spent: 0.00, status: 'Active' },
+  { id: 'u4', name: 'Harvey Specter', email: 'harvey@example.com', role: 'Customer', orders: 5, spent: 890.00, status: 'Inactive' },
+];
+
+export const MOCK_ADMIN_COUPONS = [
+  { id: 'c1', code: 'WELCOME20', discount: '20%', type: 'Percentage', usage: '45/100', status: 'Active', expiry: '2024-12-31' },
+  { id: 'c2', code: 'FRESH10', discount: '$10', type: 'Fixed Amount', usage: '120/500', status: 'Active', expiry: '2024-06-30' },
+  { id: 'c3', code: 'SUMMER50', discount: '50%', type: 'Percentage', usage: '0/50', status: 'Expired', expiry: '2023-08-31' },
+];
+
+export const MOCK_ADMIN_ORDERS = [
+  { id: 'HB-9481', customer: 'John Doe', items: 4, total: 45.00, status: 'Delivered', date: '2024-03-05' },
+  { id: 'HB-9482', customer: 'Jane Smith', items: 2, total: 22.50, status: 'Processing', date: '2024-03-06' },
+  { id: 'HB-9483', customer: 'Harvey Specter', items: 7, total: 128.40, status: 'Pending', date: '2024-03-06' },
+  { id: 'HB-9484', customer: 'Mike Ross', items: 1, total: 12.00, status: 'Cancelled', date: '2024-03-04' },
+];
