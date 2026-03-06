@@ -97,7 +97,7 @@ const ProductDetailsPage: React.FC = () => {
           <div className="flex items-center justify-between mb-10 bg-white/30 dark:bg-black/30 p-8 rounded-3xl border border-white/20 dark:border-white/10 shadow-xl backdrop-blur-xl">
             <div>
               <span className="block text-gray-500 dark:text-gray-400 text-sm mb-1 uppercase tracking-widest font-bold">Total Price</span>
-              <span className="text-4xl font-bold text-primary font-poppins">${product.price.toFixed(2)}</span>
+              <span className="text-4xl font-bold text-primary font-poppins">₹{product.price.toFixed(0)}</span>
             </div>
             
             <div className="flex items-center bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-2 shadow-inner">

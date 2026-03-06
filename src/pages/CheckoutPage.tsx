@@ -25,7 +25,7 @@ const CheckoutPage: React.FC = () => {
     cvv: ''
   });
 
-  const totalAmount = (totalPrice * 1.05).toFixed(2);
+  const totalAmount = (totalPrice * 1.05).toFixed(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -363,7 +363,7 @@ const CheckoutPage: React.FC = () => {
                       <p className="font-bold text-sm truncate">{item.name}</p>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                     </div>
-                    <span className="font-bold text-sm text-primary">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-bold text-sm text-primary">₹{(item.price * item.quantity).toFixed(0)}</span>
                   </div>
                 ))}
               </div>
@@ -371,21 +371,21 @@ const CheckoutPage: React.FC = () => {
               <div className="space-y-4 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div className="flex justify-between text-gray-500 text-sm font-medium">
                   <span>Subtotal</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>₹{totalPrice.toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between text-gray-500 text-sm font-medium">
                   <span>Delivery Fee</span>
                   <span className="text-primary font-bold">FREE</span>
                 </div>
                 <div className="flex justify-between text-gray-500 text-sm font-medium">
-                  <span>Estimated Tax</span>
-                  <span>${(totalPrice * 0.05).toFixed(2)}</span>
+                  <span>Estimated GST (5%)</span>
+                  <span>₹{(totalPrice * 0.05).toFixed(0)}</span>
                 </div>
                 <div className="pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-between items-end">
                   <span className="text-lg font-bold">Total</span>
                   <div className="text-right">
                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Inclusive of all taxes</p>
-                    <p className="text-3xl font-bold text-primary font-poppins">${totalAmount}</p>
+                    <p className="text-3xl font-bold text-primary font-poppins">₹{totalAmount}</p>
                   </div>
                 </div>
               </div>

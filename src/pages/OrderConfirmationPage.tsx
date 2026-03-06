@@ -102,7 +102,7 @@ const OrderConfirmationPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500 font-medium">Total Paid</span>
-                    <span className="font-black text-lg text-primary">${orderData.total}</span>
+                    <span className="font-black text-lg text-primary">₹{orderData.total}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500 font-medium">Order Status</span>

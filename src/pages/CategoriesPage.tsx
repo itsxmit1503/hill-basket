@@ -36,7 +36,7 @@ const CategoriesPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
         {CATEGORIES.map((category, index) => {
           const productCount = INITIAL_PRODUCTS.filter(p => p.category === category.name).length;
           
@@ -48,23 +48,23 @@ const CategoriesPage: React.FC = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link to={`/products?category=${category.name}`} className="block group">
-                <GlassCard className="p-10 relative overflow-hidden h-[300px] flex flex-col justify-between group-hover:border-primary/50 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-all duration-500">
-                  <div className={`absolute -right-10 -top-10 w-48 h-48 ${category.color.split(' ')[0]} rounded-full opacity-10 group-hover:scale-150 transition-transform duration-700 blur-3xl`} />
+                <GlassCard className="p-6 md:p-10 relative overflow-hidden h-[220px] md:h-[300px] flex flex-col justify-between group-hover:border-primary/50 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-all duration-500">
+                  <div className={`absolute -right-10 -top-10 w-32 h-32 md:w-48 md:h-48 ${category.color.split(' ')[0]} rounded-full opacity-10 group-hover:scale-150 transition-transform duration-700 blur-3xl`} />
                   
                   <div className="relative z-10">
-                    <div className={`w-20 h-20 ${category.color} rounded-3xl flex items-center justify-center text-4xl mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl shadow-black/5`}>
+                    <div className={`w-12 h-12 md:w-20 md:h-20 ${category.color} rounded-2xl md:rounded-3xl flex items-center justify-center text-2xl md:text-4xl mb-4 md:mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl shadow-black/5`}>
                       {category.icon}
                     </div>
-                    <h3 className="text-3xl font-poppins font-black mb-3 group-hover:text-primary transition-colors">{category.name}</h3>
-                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs flex items-center">
-                      <ShoppingBag size={14} className="mr-2" />
-                      {productCount} Products Available
+                    <h3 className="text-xl md:text-3xl font-poppins font-black mb-1 md:mb-3 group-hover:text-primary transition-colors">{category.name}</h3>
+                    <p className="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-widest flex items-center">
+                      <ShoppingBag size={12} className="mr-1 md:mr-2" />
+                      {productCount} Products
                     </p>
                   </div>
 
-                  <div className="relative z-10 flex items-center text-primary font-black text-lg group-hover:translate-x-2 transition-transform duration-300">
-                    <span>Shop Category</span>
-                    <ChevronRight size={24} className="ml-2" />
+                  <div className="relative z-10 flex items-center text-primary font-black text-xs md:text-lg group-hover:translate-x-2 transition-transform duration-300">
+                    <span>Shop Now</span>
+                    <ChevronRight size={18} className="ml-1 md:ml-2" />
                   </div>
                 </GlassCard>
               </Link>

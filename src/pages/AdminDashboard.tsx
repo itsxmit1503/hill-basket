@@ -46,7 +46,7 @@ const AdminDashboard: React.FC = () => {
   }, [products, searchQuery]);
 
   const stats = [
-    { label: 'Total Revenue', value: '$12,450.00', change: '+12.5%', icon: <DollarSign className="text-primary" />, trend: 'up' },
+    { label: 'Total Revenue', value: '₹1,24,500', change: '+12.5%', icon: <DollarSign className="text-primary" />, trend: 'up' },
     { label: 'Total Orders', value: '145', change: '+8.2%', icon: <ShoppingBag className="text-accent" />, trend: 'up' },
     { label: 'Total Users', value: '1,240', change: '+15.3%', icon: <Users className="text-blue-500" />, trend: 'up' },
     { label: 'Pending Support', value: tickets.filter(t => t.status === 'Open').length.toString(), change: '-2.4%', icon: <AlertCircle className="text-red-500" />, trend: 'down' },
@@ -167,7 +167,7 @@ const AdminDashboard: React.FC = () => {
               className="space-y-12"
             >
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 {stats.map((stat, idx) => (
                   <GlassCard key={idx} className="p-8 group hover:scale-105 transition-transform duration-500 cursor-pointer">
                     <div className="flex justify-between items-start mb-6">
@@ -187,9 +187,9 @@ const AdminDashboard: React.FC = () => {
 
               {/* Charts Mockup */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <GlassCard className="p-10 h-[400px] flex flex-col">
-                  <div className="flex justify-between items-center mb-10">
-                    <h3 className="text-2xl font-poppins font-black">Sales Analytics</h3>
+                <GlassCard className="p-6 md:p-10 h-[300px] md:h-[400px] flex flex-col">
+                  <div className="flex justify-between items-center mb-6 md:mb-10">
+                    <h3 className="text-xl md:text-2xl font-poppins font-black">Sales Analytics</h3>
                     <select className="bg-gray-50 dark:bg-gray-800 border-none rounded-xl px-4 py-2 font-bold text-xs">
                       <option>Last 7 Days</option>
                       <option>Last 30 Days</option>
@@ -205,15 +205,15 @@ const AdminDashboard: React.FC = () => {
                         className="w-full bg-primary/20 hover:bg-primary rounded-t-xl transition-all cursor-pointer relative group"
                       >
                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity font-bold">
-                          ${h * 10}
+                          ₹{h * 100}
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 </GlassCard>
 
-                <GlassCard className="p-10 h-[400px]">
-                  <h3 className="text-2xl font-poppins font-black mb-10">Recent Orders</h3>
+                <GlassCard className="p-6 md:p-10 h-[400px]">
+                  <h3 className="text-xl md:text-2xl font-poppins font-black mb-6 md:mb-10">Recent Orders</h3>
                   <div className="space-y-6">
                     {[1, 2, 3, 4].map((i) => (
                       <div key={i} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl transition-colors cursor-pointer group">
@@ -227,7 +227,7 @@ const AdminDashboard: React.FC = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-black text-primary">$45.00</p>
+                          <p className="font-black text-primary">₹450</p>
                           <p className="text-[10px] font-black uppercase text-green-500 bg-green-500/10 px-2 py-1 rounded-full">Delivered</p>
                         </div>
                       </div>
@@ -287,7 +287,7 @@ const AdminDashboard: React.FC = () => {
                                 {product.category}
                               </span>
                             </td>
-                            <td className="p-6 font-black text-lg text-primary">${product.price?.toFixed(2) || '0.00'}</td>
+                            <td className="p-6 font-black text-lg text-primary">₹{product.price?.toFixed(0) || '0'}</td>
                             <td className="p-6">
                               <button
                                 onClick={() => toggleStock(product.id)}
@@ -373,9 +373,8 @@ const AdminDashboard: React.FC = () => {
                       {MOCK_ADMIN_ORDERS.map((order) => (
                         <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
                           <td className="p-6 font-black">{order.id}</td>
-                          <td className="p-6 font-bold">{order.customer}</td>
-                          <td className="p-6 font-medium">{order.items} items</td>
-                          <td className="p-6 font-black text-primary">${order.total.toFixed(2)}</td>
+                          <td className="p-6 font-bold">{order.items} items</td>
+                          <td className="p-6 font-black text-primary">₹{order.total.toFixed(0)}</td>
                           <td className="p-6 text-gray-500 font-medium">{order.date}</td>
                           <td className="p-6">
                             <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
@@ -451,7 +450,7 @@ const AdminDashboard: React.FC = () => {
                             </span>
                           </td>
                           <td className="p-6 font-bold">{u.orders}</td>
-                          <td className="p-6 font-black text-primary">${u.spent.toFixed(2)}</td>
+                          <td className="p-6 font-black text-primary">₹{u.spent.toFixed(0)}</td>
                           <td className="p-6">
                             <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                               {u.status}
@@ -492,9 +491,9 @@ const AdminDashboard: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                 {MOCK_ADMIN_COUPONS.map((coupon) => (
-                  <GlassCard key={coupon.id} className="p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
+                  <GlassCard key={coupon.id} className="p-4 md:p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
                     <div className="absolute top-0 right-0 p-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${coupon.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                         {coupon.status}
@@ -507,7 +506,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="space-y-3 mb-8">
                       <div className="flex justify-between text-sm font-bold">
                         <span className="text-gray-400">Discount</span>
-                        <span className="text-green-500">{coupon.discount} OFF</span>
+                        <span className="text-green-500">{coupon.discount.includes('%') ? coupon.discount : `₹${coupon.discount.replace('$', '')}`} OFF</span>
                       </div>
                       <div className="flex justify-between text-sm font-bold">
                         <span className="text-gray-400">Usage</span>

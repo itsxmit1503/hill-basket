@@ -13,7 +13,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p1',
     name: 'Red Bull Energy Drink',
-    price: 1.99,
+    price: 110.00,
     category: 'Energy Drink',
     image: 'https://images.unsplash.com/photo-1622543925917-763c34d15384?w=400&q=80',
     stockStatus: 'In Stock',
@@ -23,7 +23,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p2',
     name: 'Monster Energy Drink',
-    price: 2.49,
+    price: 120.00,
     category: 'Energy Drink',
     image: 'https://images.unsplash.com/photo-1625505704077-336783d7f950?w=400&q=80',
     stockStatus: 'In Stock',
@@ -33,7 +33,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p3',
     name: 'Prime Hydration Drink',
-    price: 2.99,
+    price: 350.00,
     category: 'Energy Drink',
     image: 'https://images.unsplash.com/photo-1695462512693-e57929a008c3?w=400&q=80',
     stockStatus: 'In Stock',
@@ -43,7 +43,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p4',
     name: 'Hell Energy Drink',
-    price: 1.49,
+    price: 60.00,
     category: 'Energy Drink',
     image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&q=80',
     stockStatus: 'In Stock',
@@ -54,7 +54,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p5',
     name: 'India Gate Basmati Rice',
-    price: 12.99,
+    price: 150.00,
     category: 'Rice',
     image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
     stockStatus: 'In Stock',
@@ -64,7 +64,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p6',
     name: 'Silver Rice',
-    price: 8.49,
+    price: 80.00,
     category: 'Rice',
     image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&q=80',
     stockStatus: 'In Stock',
@@ -74,7 +74,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p7',
     name: 'Dawat Basmati Rice',
-    price: 11.49,
+    price: 130.00,
     category: 'Rice',
     image: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80',
     stockStatus: 'In Stock',
@@ -85,7 +85,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p8',
     name: 'Premium Almonds',
-    price: 14.99,
+    price: 450.00,
     category: 'Dry Fruits',
     image: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=400&q=80',
     stockStatus: 'In Stock',
@@ -95,7 +95,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p9',
     name: 'Roasted Cashews',
-    price: 16.49,
+    price: 550.00,
     category: 'Dry Fruits',
     image: 'https://images.unsplash.com/photo-1558961363-fa4f2323a22d?w=400&q=80',
     stockStatus: 'In Stock',
@@ -105,7 +105,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p10',
     name: 'Crunchy Peanuts',
-    price: 5.99,
+    price: 120.00,
     category: 'Dry Fruits',
     image: 'https://images.unsplash.com/photo-1567333090944-10477ce74677?w=400&q=80',
     stockStatus: 'In Stock',
@@ -116,7 +116,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p11',
     name: 'Marie Gold Biscuits',
-    price: 0.99,
+    price: 10.00,
     category: 'Biscuits',
     image: 'https://images.unsplash.com/photo-1558961363-fa4f2323a22d?w=400&q=80',
     stockStatus: 'In Stock',
@@ -126,7 +126,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p12',
     name: '50-50 Biscuits',
-    price: 1.29,
+    price: 10.00,
     category: 'Biscuits',
     image: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400&q=80',
     stockStatus: 'In Stock',
@@ -136,7 +136,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p13',
     name: 'Milk Bikies',
-    price: 1.49,
+    price: 10.00,
     category: 'Biscuits',
     image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80',
     stockStatus: 'In Stock',
@@ -146,7 +146,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p14',
     name: 'Digestive Biscuits',
-    price: 2.49,
+    price: 30.00,
     category: 'Biscuits',
     image: 'https://images.unsplash.com/photo-1532117182044-031e7da8965d?w=400&q=80',
     stockStatus: 'In Stock',
@@ -157,7 +157,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p15',
     name: 'Real Cranberry Juice',
-    price: 3.49,
+    price: 110.00,
     category: 'Juice',
     image: 'https://images.unsplash.com/photo-1563223552-30d01fda3ea6?w=400&q=80',
     stockStatus: 'In Stock',
@@ -167,7 +167,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p16',
     name: 'Pomegranate Juice',
-    price: 4.29,
+    price: 120.00,
     category: 'Juice',
     image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&q=80',
     stockStatus: 'In Stock',
@@ -177,7 +177,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p17',
     name: 'Mango Juice',
-    price: 2.99,
+    price: 90.00,
     category: 'Juice',
     image: 'https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80',
     stockStatus: 'In Stock',
