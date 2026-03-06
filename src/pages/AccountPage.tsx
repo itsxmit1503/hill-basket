@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 const AccountPage: React.FC = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { wishlist, removeFromWishlist } = useCart();
+  const { wishlist, removeFromWishlist, addToCart } = useCart();
   const [activeTab, setActiveTab] = useState('profile');
 
   const menuItems = [
@@ -284,7 +284,12 @@ const AccountPage: React.FC = () => {
                             <h4 className="font-bold text-lg mb-1">{item.name}</h4>
                             <p className="text-primary font-black mb-3">${item.price.toFixed(2)}</p>
                             <div className="flex space-x-3">
-                              <button className="text-xs bg-primary text-white px-4 py-2 rounded-lg font-bold hover:opacity-90 transition-opacity">Add to Cart</button>
+                              <button 
+                                onClick={() => addToCart(item)}
+                                className="text-xs bg-primary text-white px-4 py-2 rounded-lg font-bold hover:opacity-90 transition-opacity"
+                              >
+                                Add to Cart
+                              </button>
                               <button 
                                 onClick={() => removeFromWishlist(item.id)}
                                 className="text-xs bg-red-50 text-red-500 px-4 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors"
