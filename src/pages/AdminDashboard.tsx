@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { LayoutDashboard, ShoppingBag, Users, Ticket, LifeBuoy, TrendingUp, DollarSign, Package, AlertCircle, Plus, Edit2, Trash2, CheckCircle2, Search, Filter, ArrowUpRight, ArrowDownRight, MoreHorizontal, Sun, Moon, LogOut, Star, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -23,14 +23,27 @@ const AdminDashboard: React.FC = () => {
   }, [activeTab]);
   
   useEffect(() => {
-    const savedTickets = JSON.parse(localStorage.getItem('support_tickets') || '[]');
-    setTickets(savedTickets);
+    try {
+      const savedTickets = JSON.parse(localStorage.getItem('support_tickets') || '[]');
+      if (Array.isArray(savedTickets)) {
+        setTickets(savedTickets);
+      } else {
+        setTickets([]);
+      }
+    } catch (e) {
+      console.error('Error loading tickets:', e);
+      setTickets([]);
+    }
   }, []);
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = useMemo(() => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => {
+      const nameMatch = p?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
+      const categoryMatch = p?.category?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
+      return nameMatch || categoryMatch;
+    });
+  }, [products, searchQuery]);
 
   const stats = [
     { label: 'Total Revenue', value: '$12,450.00', change: '+12.5%', icon: <DollarSign className="text-primary" />, trend: 'up' },
@@ -318,76 +331,6 @@ const AdminDashboard: React.FC = () => {
                   </table>
                 </div>
               </GlassCard>
-            </motion.div>
-          )}
-
-          {activeTab === 'tickets' && (
-            <motion.div
-              key="tickets"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="space-y-8"
-            >
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-3xl font-poppins font-black">Support Panel</h3>
-                <div className="flex items-center space-x-4">
-                  <span className="px-4 py-2 bg-red-500/10 text-red-500 rounded-full text-xs font-black uppercase tracking-widest border border-red-500/20">
-                    {tickets.filter(t => t.status === 'Open').length} Active Tickets
-                  </span>
-                </div>
-              </div>
-
-              {tickets.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {tickets.map((ticket) => (
-                    <GlassCard key={ticket.id} className="p-8 group hover:border-primary/50 transition-all duration-500">
-                      <div className="flex justify-between items-start mb-6">
-                        <div>
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{ticket.id}</p>
-                          <h4 className="text-xl font-poppins font-black text-gray-800 dark:text-white">{ticket.subject}</h4>
-                        </div>
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${ticket.status === 'Open' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500/10 text-green-500 border border-green-500/20'}`}>
-                          {ticket.status}
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-4 mb-8">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-400">
-                            <Users size={18} />
-                          </div>
-                          <div>
-                            <p className="font-bold text-sm">{ticket.name}</p>
-                            <p className="text-xs text-gray-500">{ticket.email}</p>
-                          </div>
-                        </div>
-                        <p className="text-gray-500 text-sm leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl italic">
-                          "{ticket.message}"
-                        </p>
-                      </div>
-
-                      <div className="flex gap-4">
-                        <button className="btn-primary flex-1 py-3 text-sm font-black flex items-center justify-center space-x-2">
-                          <MessageSquare size={16} />
-                          <span>Respond</span>
-                        </button>
-                        <button className="p-3 bg-green-500/10 text-green-500 rounded-xl hover:bg-green-500 hover:text-white transition-all border border-green-500/20">
-                          <CheckCircle2 size={20} />
-                        </button>
-                      </div>
-                    </GlassCard>
-                  ))}
-                </div>
-              ) : (
-                <GlassCard className="p-20 text-center border-none shadow-2xl">
-                  <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-8 shadow-xl">
-                    <CheckCircle2 size={48} />
-                  </div>
-                  <h2 className="text-3xl font-poppins font-black mb-4">No Active Tickets</h2>
-                  <p className="text-gray-500 max-w-sm mx-auto font-medium">Everything is under control! Your customers are currently happy with the service.</p>
-                </GlassCard>
-              )}
             </motion.div>
           )}
 
