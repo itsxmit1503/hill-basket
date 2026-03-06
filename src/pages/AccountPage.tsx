@@ -130,137 +130,161 @@ const AccountPage: React.FC = () => {
                       <span>Add New Address</span>
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {MOCK_ADDRESSES.map((addr) => (
-                      <GlassCard key={addr.id} className={`p-6 border-2 transition-all ${addr.isDefault ? 'border-primary' : 'border-transparent'}`}>
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex items-center space-x-2">
-                            <MapPin size={18} className="text-primary" />
-                            <span className="font-bold text-lg">{addr.type}</span>
-                            {addr.isDefault && (
-                              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Default</span>
-                            )}
+                  {MOCK_ADDRESSES.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {MOCK_ADDRESSES.map((addr) => (
+                        <GlassCard key={addr.id} className={`p-6 border-2 transition-all ${addr.isDefault ? 'border-primary' : 'border-transparent'}`}>
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center space-x-2">
+                              <MapPin size={18} className="text-primary" />
+                              <span className="font-bold text-lg">{addr.type}</span>
+                              {addr.isDefault && (
+                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Default</span>
+                              )}
+                            </div>
+                            <div className="flex space-x-2">
+                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-primary">
+                                <Edit2 size={16} />
+                              </button>
+                              <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-400 hover:text-red-500">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex space-x-2">
-                            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-primary">
-                              <Edit2 size={16} />
-                            </button>
-                            <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-400 hover:text-red-500">
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </div>
-                        <p className="text-gray-600 dark:text-gray-400 font-medium">
-                          {addr.street}<br />
-                          {addr.city}, {addr.state} {addr.zip}
-                        </p>
-                      </GlassCard>
-                    ))}
-                  </div>
+                          <p className="text-gray-600 dark:text-gray-400 font-medium">
+                            {addr.street}<br />
+                            {addr.city}, {addr.state} {addr.zip}
+                          </p>
+                        </GlassCard>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                      No saved addresses found.
+                    </div>
+                  )}
                 </motion.div>
               )}
 
               {activeTab === 'orders' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                  {MOCK_ORDERS.map((order) => (
-                    <GlassCard key={order.id} className="p-6">
-                      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                            <ShoppingBag size={24} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Order ID</p>
-                            <p className="text-lg font-black">{order.id}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-8">
-                          <div>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Date</p>
-                            <p className="font-bold">{new Date(order.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Total</p>
-                            <p className="font-black text-primary">${order.total.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <span className="px-4 py-2 bg-green-500/10 text-green-500 rounded-full text-xs font-black uppercase tracking-widest flex items-center space-x-1">
-                              <CheckCircle2 size={12} />
-                              <span>{order.status}</span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        {order.items.map((item, idx) => (
-                          <div key={idx} className="flex justify-between items-center">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center text-xs font-bold">
-                                {item.quantity}x
-                              </div>
-                              <span className="font-bold">{item.name}</span>
+                  {MOCK_ORDERS.length > 0 ? (
+                    MOCK_ORDERS.map((order) => (
+                      <GlassCard key={order.id} className="p-6">
+                        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                              <ShoppingBag size={24} />
                             </div>
-                            <span className="font-bold text-gray-500">${(item.price * item.quantity).toFixed(2)}</span>
+                            <div>
+                              <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Order ID</p>
+                              <p className="text-lg font-black">{order.id}</p>
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                      <div className="mt-8 flex justify-end">
-                        <button className="text-primary font-bold hover:underline">Download Invoice</button>
-                      </div>
-                    </GlassCard>
-                  ))}
+                          <div className="flex items-center space-x-8">
+                            <div>
+                              <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Date</p>
+                              <p className="font-bold">{new Date(order.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Total</p>
+                              <p className="font-black text-primary">${order.total.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <span className="px-4 py-2 bg-green-500/10 text-green-500 rounded-full text-xs font-black uppercase tracking-widest flex items-center space-x-1">
+                                <CheckCircle2 size={12} />
+                                <span>{order.status}</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          {order.items.map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-center">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center text-xs font-bold">
+                                  {item.quantity}x
+                                </div>
+                                <span className="font-bold">{item.name}</span>
+                              </div>
+                              <span className="font-bold text-gray-500">${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-8 flex justify-end">
+                          <button className="text-primary font-bold hover:underline">Download Invoice</button>
+                        </div>
+                      </GlassCard>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                      No order history found.
+                    </div>
+                  )}
                 </motion.div>
               )}
 
               {activeTab === 'notifications' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                  {MOCK_NOTIFICATIONS.map((notif) => (
-                    <div key={notif.id} className={`p-6 rounded-2xl flex items-start space-x-4 transition-all ${notif.read ? 'bg-transparent' : 'bg-primary/5 border border-primary/10'}`}>
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${notif.type === 'order' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
-                        {notif.type === 'order' ? <ShoppingBag size={20} /> : <Award size={20} />}
-                      </div>
-                      <div className="flex-grow">
-                        <div className="flex justify-between items-start mb-1">
-                          <h4 className="font-bold text-lg">{notif.title}</h4>
-                          <span className="text-xs font-bold text-gray-400 flex items-center space-x-1">
-                            <Clock size={12} />
-                            <span>{notif.time}</span>
-                          </span>
+                  {MOCK_NOTIFICATIONS.length > 0 ? (
+                    MOCK_NOTIFICATIONS.map((notif) => (
+                      <div key={notif.id} className={`p-6 rounded-2xl flex items-start space-x-4 transition-all ${notif.read ? 'bg-transparent' : 'bg-primary/5 border border-primary/10'}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${notif.type === 'order' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
+                          {notif.type === 'order' ? <ShoppingBag size={20} /> : <Award size={20} />}
                         </div>
-                        <p className="text-gray-500 font-medium">{notif.message}</p>
-                        {!notif.read && (
-                          <button className="text-xs text-primary font-black uppercase tracking-widest mt-2 hover:underline">Mark as read</button>
-                        )}
+                        <div className="flex-grow">
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className="font-bold text-lg">{notif.title}</h4>
+                            <span className="text-xs font-bold text-gray-400 flex items-center space-x-1">
+                              <Clock size={12} />
+                              <span>{notif.time}</span>
+                            </span>
+                          </div>
+                          <p className="text-gray-500 font-medium">{notif.message}</p>
+                          {!notif.read && (
+                            <button className="text-xs text-primary font-black uppercase tracking-widest mt-2 hover:underline">Mark as read</button>
+                          )}
+                        </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                      No notifications.
                     </div>
-                  ))}
+                  )}
                 </motion.div>
               )}
 
               {activeTab === 'reviews' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                  {MOCK_REVIEWS.map((review) => (
-                    <GlassCard key={review.id} className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h4 className="text-xl font-bold mb-1">{review.productName}</h4>
-                          <div className="flex text-yellow-400">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={16} fill={i < review.rating ? "currentColor" : "none"} />
-                            ))}
+                  {MOCK_REVIEWS.length > 0 ? (
+                    MOCK_REVIEWS.map((review) => (
+                      <GlassCard key={review.id} className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="text-xl font-bold mb-1">{review.productName}</h4>
+                            <div className="flex text-yellow-400">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={16} fill={i < review.rating ? "currentColor" : "none"} />
+                              ))}
+                            </div>
                           </div>
+                          <span className="text-sm font-bold text-gray-400">{review.date}</span>
                         </div>
-                        <span className="text-sm font-bold text-gray-400">{review.date}</span>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
-                        "{review.comment}"
-                      </p>
-                      <div className="mt-4 flex space-x-4">
-                        <button className="text-sm text-primary font-bold hover:underline">Edit Review</button>
-                        <button className="text-sm text-red-500 font-bold hover:underline">Delete</button>
-                      </div>
-                    </GlassCard>
-                  ))}
+                        <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
+                          "{review.comment}"
+                        </p>
+                        <div className="mt-4 flex space-x-4">
+                          <button className="text-sm text-primary font-bold hover:underline">Edit Review</button>
+                          <button className="text-sm text-red-500 font-bold hover:underline">Delete</button>
+                        </div>
+                      </GlassCard>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                      No reviews yet.
+                    </div>
+                  )}
                 </motion.div>
               )}
 

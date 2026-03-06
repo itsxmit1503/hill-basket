@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface Product {
   id: string;
@@ -32,33 +33,54 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('cart');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.error('Error parsing cart from localStorage', e);
-      return [];
-    }
-  });
+  const { user } = useAuth();
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const [wishlist, setWishlist] = useState<Product[]>(() => {
-    try {
-      const saved = localStorage.getItem('wishlist');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.error('Error parsing wishlist from localStorage', e);
-      return [];
-    }
-  });
+  // Helper to get storage keys based on user session
+  const getStorageKey = (type: 'cart' | 'wishlist') => {
+    const prefix = user ? `user_${user.id}` : 'guest';
+    return `${prefix}_${type}`;
+  };
 
+  // Load data when user changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-  }, [items]);
+    const loadData = () => {
+      const cartKey = getStorageKey('cart');
+      const wishlistKey = getStorageKey('wishlist');
 
+      try {
+        const savedCart = localStorage.getItem(cartKey);
+        const savedWishlist = localStorage.getItem(wishlistKey);
+        
+        setItems(savedCart ? JSON.parse(savedCart) : []);
+        setWishlist(savedWishlist ? JSON.parse(savedWishlist) : []);
+      } catch (e) {
+        console.error('Error loading cart/wishlist', e);
+        setItems([]);
+        setWishlist([]);
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+
+    loadData();
+  }, [user?.id]);
+
+  // Save cart data when items change
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+    if (!isInitialized) return;
+    const cartKey = getStorageKey('cart');
+    localStorage.setItem(cartKey, JSON.stringify(items));
+  }, [items, user?.id, isInitialized]);
+
+  // Save wishlist data when wishlist changes
+  useEffect(() => {
+    if (!isInitialized) return;
+    const wishlistKey = getStorageKey('wishlist');
+    localStorage.setItem(wishlistKey, JSON.stringify(wishlist));
+  }, [wishlist, user?.id, isInitialized]);
 
   const addToCart = (product: Product) => {
     if (product.stockStatus === 'Out of Stock') return;

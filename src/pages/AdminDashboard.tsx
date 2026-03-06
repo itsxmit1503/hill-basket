@@ -46,10 +46,10 @@ const AdminDashboard: React.FC = () => {
   }, [products, searchQuery]);
 
   const stats = [
-    { label: 'Total Revenue', value: '₹1,24,500', change: '+12.5%', icon: <DollarSign className="text-primary" />, trend: 'up' },
-    { label: 'Total Orders', value: '145', change: '+8.2%', icon: <ShoppingBag className="text-accent" />, trend: 'up' },
-    { label: 'Total Users', value: '1,240', change: '+15.3%', icon: <Users className="text-blue-500" />, trend: 'up' },
-    { label: 'Pending Support', value: tickets.filter(t => t.status === 'Open').length.toString(), change: '-2.4%', icon: <AlertCircle className="text-red-500" />, trend: 'down' },
+    { label: 'Total Revenue', value: '₹0', change: '0%', icon: <DollarSign className="text-primary" />, trend: 'neutral' },
+    { label: 'Total Orders', value: '0', change: '0%', icon: <ShoppingBag className="text-accent" />, trend: 'neutral' },
+    { label: 'Total Users', value: '0', change: '0%', icon: <Users className="text-blue-500" />, trend: 'neutral' },
+    { label: 'Pending Support', value: tickets.filter(t => t.status === 'Open').length.toString(), change: '0%', icon: <AlertCircle className="text-red-500" />, trend: 'neutral' },
   ];
 
   const sidebarItems = [
@@ -195,43 +195,15 @@ const AdminDashboard: React.FC = () => {
                       <option>Last 30 Days</option>
                     </select>
                   </div>
-                  <div className="flex-grow flex items-end justify-between gap-2">
-                    {[40, 70, 45, 90, 65, 85, 55].map((h, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${h}%` }}
-                        transition={{ duration: 1, delay: i * 0.1 }}
-                        className="w-full bg-primary/20 hover:bg-primary rounded-t-xl transition-all cursor-pointer relative group"
-                      >
-                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity font-bold">
-                          ₹{h * 100}
-                        </div>
-                      </motion.div>
-                    ))}
+                  <div className="flex-grow flex items-end justify-center gap-2">
+                    <div className="text-center text-gray-400 font-bold">No sales data available</div>
                   </div>
                 </GlassCard>
 
                 <GlassCard className="p-6 md:p-10 h-[400px]">
                   <h3 className="text-xl md:text-2xl font-poppins font-black mb-6 md:mb-10">Recent Orders</h3>
-                  <div className="space-y-6">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl transition-colors cursor-pointer group">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center text-accent">
-                            <ShoppingBag size={20} />
-                          </div>
-                          <div>
-                            <p className="font-bold text-sm">Order #HB-948{i}</p>
-                            <p className="text-xs text-gray-400">2 mins ago • Local City</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-black text-primary">₹450</p>
-                          <p className="text-[10px] font-black uppercase text-green-500 bg-green-500/10 px-2 py-1 rounded-full">Delivered</p>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="space-y-6 flex items-center justify-center h-[250px]">
+                    <div className="text-center text-gray-400 font-bold">No recent orders</div>
                   </div>
                 </GlassCard>
               </div>
@@ -370,34 +342,42 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {MOCK_ADMIN_ORDERS.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
-                          <td className="p-6 font-black">{order.id}</td>
-                          <td className="p-6 font-bold">{order.items} items</td>
-                          <td className="p-6 font-black text-primary">₹{order.total.toFixed(0)}</td>
-                          <td className="p-6 text-gray-500 font-medium">{order.date}</td>
-                          <td className="p-6">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
-                              order.status === 'Processing' ? 'bg-blue-100 text-blue-600' :
-                              order.status === 'Pending' ? 'bg-yellow-100 text-yellow-600' :
-                              'bg-red-100 text-red-600'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center justify-center space-x-2">
-                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                <Edit2 size={16} />
-                              </button>
-                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                <MoreHorizontal size={16} />
-                              </button>
-                            </div>
+                      {MOCK_ADMIN_ORDERS.length > 0 ? (
+                        MOCK_ADMIN_ORDERS.map((order) => (
+                          <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                            <td className="p-6 font-black">{order.id}</td>
+                            <td className="p-6 font-bold">{order.items} items</td>
+                            <td className="p-6 font-black text-primary">₹{order.total.toFixed(0)}</td>
+                            <td className="p-6 text-gray-500 font-medium">{order.date}</td>
+                            <td className="p-6">
+                              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                                order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
+                                order.status === 'Processing' ? 'bg-blue-100 text-blue-600' :
+                                order.status === 'Pending' ? 'bg-yellow-100 text-yellow-600' :
+                                'bg-red-100 text-red-600'
+                              }`}>
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="p-6">
+                              <div className="flex items-center justify-center space-x-2">
+                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                  <MoreHorizontal size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={7} className="p-10 text-center text-gray-400 font-bold">
+                            No orders found.
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -431,43 +411,51 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {MOCK_ADMIN_USERS.map((u) => (
-                        <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
-                          <td className="p-6">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black uppercase">
-                                {u.name.charAt(0)}
+                      {MOCK_ADMIN_USERS.length > 0 ? (
+                        MOCK_ADMIN_USERS.map((u) => (
+                          <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                            <td className="p-6">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-black uppercase">
+                                  {u.name.charAt(0)}
+                                </div>
+                                <div>
+                                  <p className="font-black">{u.name}</p>
+                                  <p className="text-xs text-gray-400">{u.email}</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-black">{u.name}</p>
-                                <p className="text-xs text-gray-400">{u.email}</p>
+                            </td>
+                            <td className="p-6">
+                              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.role === 'Admin' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'}`}>
+                                {u.role}
+                              </span>
+                            </td>
+                            <td className="p-6 font-bold">{u.orders}</td>
+                            <td className="p-6 font-black text-primary">₹{u.spent.toFixed(0)}</td>
+                            <td className="p-6">
+                              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                {u.status}
+                              </span>
+                            </td>
+                            <td className="p-6">
+                              <div className="flex items-center justify-center space-x-2">
+                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                  <AlertCircle size={16} />
+                                </button>
+                                <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors">
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
-                            </div>
-                          </td>
-                          <td className="p-6">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.role === 'Admin' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'}`}>
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="p-6 font-bold">{u.orders}</td>
-                          <td className="p-6 font-black text-primary">₹{u.spent.toFixed(0)}</td>
-                          <td className="p-6">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                              {u.status}
-                            </span>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center justify-center space-x-2">
-                              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                <AlertCircle size={16} />
-                              </button>
-                              <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="p-10 text-center text-gray-400 font-bold">
+                            No users found.
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -491,43 +479,53 @@ const AdminDashboard: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                {MOCK_ADMIN_COUPONS.map((coupon) => (
-                  <GlassCard key={coupon.id} className="p-4 md:p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${coupon.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                        {coupon.status}
-                      </span>
-                    </div>
-                    <div className="mb-6">
-                      <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">{coupon.type}</p>
-                      <h4 className="text-3xl font-poppins font-black text-primary">{coupon.code}</h4>
-                    </div>
-                    <div className="space-y-3 mb-8">
-                      <div className="flex justify-between text-sm font-bold">
-                        <span className="text-gray-400">Discount</span>
-                        <span className="text-green-500">{coupon.discount.includes('%') ? coupon.discount : `₹${coupon.discount.replace('$', '')}`} OFF</span>
+              {MOCK_ADMIN_COUPONS.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+                  {MOCK_ADMIN_COUPONS.map((coupon) => (
+                    <GlassCard key={coupon.id} className="p-4 md:p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
+                      <div className="absolute top-0 right-0 p-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${coupon.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                          {coupon.status}
+                        </span>
                       </div>
-                      <div className="flex justify-between text-sm font-bold">
-                        <span className="text-gray-400">Usage</span>
-                        <span>{coupon.usage}</span>
+                      <div className="mb-6">
+                        <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">{coupon.type}</p>
+                        <h4 className="text-3xl font-poppins font-black text-primary">{coupon.code}</h4>
                       </div>
-                      <div className="flex justify-between text-sm font-bold">
-                        <span className="text-gray-400">Expires</span>
-                        <span className="text-red-400">{coupon.expiry}</span>
+                      <div className="space-y-3 mb-8">
+                        <div className="flex justify-between text-sm font-bold">
+                          <span className="text-gray-400">Discount</span>
+                          <span className="text-green-500">{coupon.discount.includes('%') ? coupon.discount : `₹${coupon.discount.replace('$', '')}`} OFF</span>
+                        </div>
+                        <div className="flex justify-between text-sm font-bold">
+                          <span className="text-gray-400">Usage</span>
+                          <span>{coupon.usage}</span>
+                        </div>
+                        <div className="flex justify-between text-sm font-bold">
+                          <span className="text-gray-400">Expires</span>
+                          <span className="text-red-400">{coupon.expiry}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <button className="flex-1 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
-                        Edit
-                      </button>
-                      <button className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </GlassCard>
-                ))}
-              </div>
+                      <div className="flex gap-3">
+                        <button className="flex-1 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+                          Edit
+                        </button>
+                        <button className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </GlassCard>
+                  ))}
+                </div>
+              ) : (
+                <GlassCard className="p-20 text-center border-none shadow-2xl">
+                  <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-8 shadow-xl">
+                    <Ticket size={48} />
+                  </div>
+                  <h2 className="text-3xl font-poppins font-black mb-4">No Coupons Found</h2>
+                  <p className="text-gray-500 max-w-sm mx-auto font-medium">Create your first coupon code to start running promotions.</p>
+                </GlassCard>
+              )}
             </motion.div>
           )}
 
