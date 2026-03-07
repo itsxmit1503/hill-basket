@@ -877,8 +877,6 @@ const AdminDashboard: React.FC = () => {
           )}
         </AnimatePresence>
 
-        </AnimatePresence>
-
         {/* Product Creation/Edit Modal */}
         <AnimatePresence>
           {isProductModalOpen && (
