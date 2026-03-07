@@ -13,7 +13,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p1',
     name: 'Red Bull Energy Drink',
-    price: 110.00,
+    price: 125.00,
     category: 'Energy Drink',
     image: 'https://images.unsplash.com/photo-1622543925917-763c34d15384?w=400&q=80',
     stockStatus: 'In Stock',
@@ -23,9 +23,9 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p2',
     name: 'Monster Energy Drink',
-    price: 120.00,
+    price: 110.00,
     category: 'Energy Drink',
-    image: 'https://images.unsplash.com/photo-1625505704077-336783d7f950?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80',
     stockStatus: 'In Stock',
     rating: 4.7,
     description: 'Tear into a can of the meanest energy drink on the planet.'
