@@ -15,12 +15,36 @@ const AdminDashboard: React.FC = () => {
   
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
   const [tickets, setTickets] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Clear search query when switching tabs to prevent blank screens due to active filters
   useEffect(() => {
     setSearchQuery('');
   }, [activeTab]);
+  
+  // Load users from localStorage
+  useEffect(() => {
+    try {
+      const savedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      if (Array.isArray(savedUsers)) {
+        // Map users to include display fields if missing
+        const mappedUsers = savedUsers.map(u => ({
+          ...u,
+          role: u.role || 'Customer',
+          orders: u.orders || 0,
+          spent: u.spent || 0,
+          status: u.status || 'Active'
+        }));
+        setUsers(mappedUsers);
+      } else {
+        setUsers([]);
+      }
+    } catch (e) {
+      console.error('Error loading users:', e);
+      setUsers([]);
+    }
+  }, []);
   
   useEffect(() => {
     try {
@@ -48,7 +72,7 @@ const AdminDashboard: React.FC = () => {
   const stats = [
     { label: 'Total Revenue', value: '₹0', change: '0%', icon: <DollarSign className="text-primary" />, trend: 'neutral' },
     { label: 'Total Orders', value: '0', change: '0%', icon: <ShoppingBag className="text-accent" />, trend: 'neutral' },
-    { label: 'Total Users', value: '0', change: '0%', icon: <Users className="text-blue-500" />, trend: 'neutral' },
+    { label: 'Total Users', value: users.length.toString(), change: '+100%', icon: <Users className="text-blue-500" />, trend: 'up' },
     { label: 'Pending Support', value: tickets.filter(t => t.status === 'Open').length.toString(), change: '0%', icon: <AlertCircle className="text-red-500" />, trend: 'neutral' },
   ];
 
@@ -411,8 +435,8 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {MOCK_ADMIN_USERS.length > 0 ? (
-                        MOCK_ADMIN_USERS.map((u) => (
+                      {users.length > 0 ? (
+                        users.map((u) => (
                           <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
                             <td className="p-6">
                               <div className="flex items-center space-x-3">
