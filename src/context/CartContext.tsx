@@ -28,6 +28,8 @@ interface CartContextType {
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
+  applyCoupon: (code: string) => { success: boolean; message: string; discount: number };
+  couponDiscount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -37,6 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
 
   // Helper to get storage keys based on user session
   const getStorageKey = (type: 'cart' | 'wishlist') => {
@@ -123,6 +126,32 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return wishlist.some(item => item.id === productId);
   };
 
+  const applyCoupon = (code: string) => {
+    const coupons = JSON.parse(localStorage.getItem('admin_coupons') || '[]');
+    const coupon = coupons.find((c: any) => c.code === code.toUpperCase() && c.status === 'Active');
+
+    if (!coupon) {
+      setCouponDiscount(0);
+      return { success: false, message: 'Invalid or expired coupon code', discount: 0 };
+    }
+
+    let discount = 0;
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    if (coupon.type === 'Percentage') {
+      const percentage = parseFloat(coupon.discount.replace('%', ''));
+      discount = (subtotal * percentage) / 100;
+    } else {
+      discount = parseFloat(coupon.discount.replace(/[^0-9.]/g, ''));
+    }
+
+    // Ensure discount doesn't exceed total
+    discount = Math.min(discount, subtotal);
+    
+    setCouponDiscount(discount);
+    return { success: true, message: 'Coupon applied successfully!', discount };
+  };
+
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -138,7 +167,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       wishlist,
       addToWishlist,
       removeFromWishlist,
-      isInWishlist
+      isInWishlist,
+      applyCoupon,
+      couponDiscount
     }}>
       {children}
     </CartContext.Provider>

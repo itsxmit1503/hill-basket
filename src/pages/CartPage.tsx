@@ -7,9 +7,26 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Ticket, Truck,
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CartPage: React.FC = () => {
-  const { items, removeFromCart, updateQuantity, totalPrice, itemCount } = useCart();
+  const { items, removeFromCart, updateQuantity, totalPrice, itemCount, applyCoupon, couponDiscount } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  
+  const [couponCode, setCouponCode] = React.useState('');
+  const [couponMessage, setCouponMessage] = React.useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) return;
+    
+    const result = applyCoupon(couponCode);
+    setCouponMessage({
+      text: result.message,
+      type: result.success ? 'success' : 'error'
+    });
+    
+    if (result.success) {
+      setTimeout(() => setCouponMessage(null), 3000);
+    }
+  };
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -126,26 +143,53 @@ const CartPage: React.FC = () => {
                 <span>Estimated GST (5%)</span>
                 <span>₹{(totalPrice * 0.05).toFixed(0)}</span>
               </div>
+              {couponDiscount > 0 && (
+                <div className="flex justify-between text-green-500 font-bold">
+                  <span>Discount</span>
+                  <span>-₹{couponDiscount.toFixed(0)}</span>
+                </div>
+              )}
               <div className="pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-between">
                 <span className="text-xl font-bold">Total Amount</span>
-                <span className="text-3xl font-bold text-primary">₹{(totalPrice * 1.05).toFixed(0)}</span>
+                <span className="text-3xl font-bold text-primary">₹{Math.max(0, (totalPrice * 1.05) - couponDiscount).toFixed(0)}</span>
               </div>
             </div>
 
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 ml-1">Promo Code</label>
-              <div className="flex bg-gray-100 dark:bg-gray-800 p-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner">
-                <div className="p-3 text-gray-400">
-                  <Ticket size={20} />
+              <div className="relative">
+                <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner overflow-hidden">
+                  <div className="p-3 text-gray-400 flex items-center justify-center pl-4">
+                    <Ticket size={20} />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    className="bg-transparent border-none focus:ring-0 flex-1 px-2 font-bold uppercase tracking-widest text-gray-800 dark:text-white placeholder:normal-case placeholder:tracking-normal placeholder:font-medium"
+                  />
+                  <button 
+                    onClick={handleApplyCoupon}
+                    className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary-dark transition-all shadow-md m-1 shrink-0"
+                  >
+                    Apply
+                  </button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Enter code"
-                  className="bg-transparent border-none focus:ring-0 flex-1 px-2 font-medium"
-                />
-                <button className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary-dark transition-all shadow-md">
-                  Apply
-                </button>
+                <AnimatePresence>
+                  {couponMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className={`absolute left-0 right-0 -bottom-8 text-xs font-bold text-center ${
+                        couponMessage.type === 'success' ? 'text-green-500' : 'text-red-500'
+                      }`}
+                    >
+                      {couponMessage.text}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
