@@ -17,8 +17,23 @@ const AdminDashboard: React.FC = () => {
   const [tickets, setTickets] = useState([]);
   const [users, setUsers] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>(CATEGORIES);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Product Modal State
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isNewCategory, setIsNewCategory] = useState(false);
+  const [productForm, setProductForm] = useState({
+    id: '',
+    name: '',
+    category: '',
+    price: '',
+    stockStatus: 'In Stock',
+    image: '',
+    description: '',
+    rating: 0
+  });
+
   // Coupon Modal State
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [couponForm, setCouponForm] = useState({
@@ -41,6 +56,38 @@ const AdminDashboard: React.FC = () => {
     setSearchQuery('');
   }, [activeTab]);
   
+  // Load products and categories from localStorage
+  useEffect(() => {
+    try {
+      const savedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+      if (Array.isArray(savedProducts) && savedProducts.length > 0) {
+        setProducts(savedProducts);
+      } else {
+        setProducts(INITIAL_PRODUCTS);
+      }
+
+      const savedCategories = JSON.parse(localStorage.getItem('categories') || '[]');
+      if (Array.isArray(savedCategories) && savedCategories.length > 0) {
+        setCategories(savedCategories);
+      } else {
+        setCategories(CATEGORIES);
+      }
+    } catch (e) {
+      console.error('Error loading products/categories:', e);
+      setProducts(INITIAL_PRODUCTS);
+      setCategories(CATEGORIES);
+    }
+  }, []);
+
+  // Save products and categories to localStorage
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
+
   // Load users from localStorage
   useEffect(() => {
     try {
@@ -146,6 +193,91 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteCoupon = (id: string) => {
     if (window.confirm('Are you sure you want to delete this coupon?')) {
       setCoupons(prev => prev.filter(c => c.id !== id));
+    }
+  };
+
+  const handleSaveProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    let category = productForm.category;
+    
+    // Handle new category logic
+    if (isNewCategory) {
+        if (category) {
+            const newCat = { id: category.toLowerCase().replace(/\s+/g, '-'), name: category };
+            setCategories(prev => [...prev, newCat]);
+        } else {
+            // If user checked "New Category" but didn't type anything, fallback
+            category = categories[0]?.name || 'Uncategorized';
+        }
+    } else if (!category) {
+        category = categories[0]?.name || 'Uncategorized';
+    }
+
+    const price = parseFloat(productForm.price.toString()) || 0;
+
+    if (productForm.id) {
+      // Edit existing
+      setProducts(prev => prev.map(p => p.id === productForm.id ? { 
+          ...p, 
+          ...productForm, 
+          price,
+          category 
+      } : p));
+    } else {
+      // Create new
+      const newProduct = {
+        ...productForm,
+        id: Math.random().toString(36).substr(2, 9),
+        rating: 0,
+        price,
+        category
+      };
+      // @ts-ignore
+      setProducts(prev => [newProduct, ...prev]);
+    }
+
+    setIsProductModalOpen(false);
+    resetProductForm();
+  };
+
+  const handleEditProduct = (product: any) => {
+    setProductForm({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      stockStatus: product.stockStatus,
+      image: product.image,
+      description: product.description || '',
+      rating: product.rating
+    });
+    setIsNewCategory(false);
+    setIsProductModalOpen(true);
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      id: '',
+      name: '',
+      category: categories[0]?.name || '',
+      price: '',
+      stockStatus: 'In Stock',
+      image: '',
+      description: '',
+      rating: 0
+    });
+    setIsNewCategory(false);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductForm(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -343,7 +475,13 @@ const AdminDashboard: React.FC = () => {
             >
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-3xl font-poppins font-black">Manage Products</h3>
-                <button className="btn-primary py-4 px-8 flex items-center space-x-3 shadow-2xl shadow-primary/20">
+                <button 
+                  onClick={() => {
+                    resetProductForm();
+                    setIsProductModalOpen(true);
+                  }}
+                  className="btn-primary py-4 px-8 flex items-center space-x-3 shadow-2xl shadow-primary/20"
+                >
                   <Plus size={24} />
                   <span>Add New Product</span>
                 </button>
@@ -399,7 +537,10 @@ const AdminDashboard: React.FC = () => {
                             </td>
                             <td className="p-6">
                               <div className="flex items-center justify-center space-x-2">
-                                <button className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
+                                <button 
+                                  onClick={() => handleEditProduct(product)}
+                                  className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
+                                >
                                   <Edit2 size={18} />
                                 </button>
                                 <button
@@ -732,6 +873,172 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-gray-500 max-w-sm mx-auto font-medium">Everything is under control! Your customers are currently happy with the service.</p>
                 </GlassCard>
               )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        </AnimatePresence>
+
+        {/* Product Creation/Edit Modal */}
+        <AnimatePresence>
+          {isProductModalOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              >
+                <GlassCard className="p-8 shadow-2xl relative">
+                  <button
+                    onClick={() => setIsProductModalOpen(false)}
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                  
+                  <h2 className="text-2xl font-poppins font-black mb-6">{productForm.id ? 'Edit Product' : 'Add New Product'}</h2>
+                  
+                  <form onSubmit={handleSaveProduct} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Left Column */}
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Product Name</label>
+                          <input
+                            type="text"
+                            required
+                            className="input-field py-3 font-bold"
+                            placeholder="e.g. Organic Bananas"
+                            value={productForm.name}
+                            onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Price (₹)</label>
+                          <input
+                            type="number"
+                            required
+                            min="0"
+                            className="input-field py-3 font-bold"
+                            placeholder="0"
+                            value={productForm.price}
+                            onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Category</label>
+                          <div className="flex items-center space-x-3 mb-2">
+                            <input 
+                              type="checkbox" 
+                              id="new-category"
+                              checked={isNewCategory}
+                              onChange={(e) => setIsNewCategory(e.target.checked)}
+                              className="w-4 h-4 rounded text-primary focus:ring-primary border-gray-300"
+                            />
+                            <label htmlFor="new-category" className="text-xs font-bold cursor-pointer">Create New Category</label>
+                          </div>
+                          
+                          {isNewCategory ? (
+                            <input
+                              type="text"
+                              required
+                              className="input-field py-3 font-bold"
+                              placeholder="New Category Name"
+                              value={productForm.category}
+                              onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                            />
+                          ) : (
+                            <select
+                              className="input-field py-3 font-bold"
+                              value={productForm.category}
+                              onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                            >
+                              {categories.map(cat => (
+                                <option key={cat.id} value={cat.name}>{cat.name}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Stock Status</label>
+                          <select
+                            className="input-field py-3 font-bold"
+                            value={productForm.stockStatus}
+                            onChange={(e) => setProductForm({ ...productForm, stockStatus: e.target.value })}
+                          >
+                            <option value="In Stock">In Stock</option>
+                            <option value="Out of Stock">Out of Stock</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Product Image</label>
+                          <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer relative group">
+                            <input 
+                              type="file" 
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            {productForm.image ? (
+                              <div className="relative h-40 w-full">
+                                <img src={productForm.image} alt="Preview" className="w-full h-full object-contain rounded-xl" />
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                                  <span className="text-white font-bold text-sm">Change Image</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="h-40 flex flex-col items-center justify-center text-gray-400">
+                                <Package size={32} className="mb-2" />
+                                <span className="text-xs font-bold">Click to upload image</span>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-gray-400 font-medium ml-1">Supports JPG, PNG (Max 5MB)</p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Description</label>
+                          <textarea
+                            className="input-field py-3 font-bold min-h-[120px] resize-none"
+                            placeholder="Product description..."
+                            value={productForm.description}
+                            onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 flex justify-end space-x-4 border-t border-gray-100 dark:border-gray-800 mt-6">
+                      <button
+                        type="button"
+                        onClick={() => setIsProductModalOpen(false)}
+                        className="px-6 py-3 font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn-primary px-8 py-3 font-bold"
+                      >
+                        {productForm.id ? 'Save Changes' : 'Create Product'}
+                      </button>
+                    </div>
+                  </form>
+                </GlassCard>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
