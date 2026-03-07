@@ -59,21 +59,22 @@ const AdminDashboard: React.FC = () => {
   // Load products and categories from localStorage
   useEffect(() => {
     try {
-      const savedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+      // Use a new key 'hill_basket_products_v2' to force a fresh load of the new product list
+      const savedProducts = JSON.parse(localStorage.getItem('hill_basket_products_v2') || '[]');
       if (Array.isArray(savedProducts) && savedProducts.length > 0) {
         setProducts(savedProducts);
       } else {
-        // If no products in storage, use INITIAL_PRODUCTS and save them
+        // If no products in new storage key, use INITIAL_PRODUCTS and save them
         setProducts(INITIAL_PRODUCTS);
-        localStorage.setItem('products', JSON.stringify(INITIAL_PRODUCTS));
+        localStorage.setItem('hill_basket_products_v2', JSON.stringify(INITIAL_PRODUCTS));
       }
 
-      const savedCategories = JSON.parse(localStorage.getItem('categories') || '[]');
+      const savedCategories = JSON.parse(localStorage.getItem('hill_basket_categories_v2') || '[]');
       if (Array.isArray(savedCategories) && savedCategories.length > 0) {
         setCategories(savedCategories);
       } else {
         setCategories(CATEGORIES);
-        localStorage.setItem('categories', JSON.stringify(CATEGORIES));
+        localStorage.setItem('hill_basket_categories_v2', JSON.stringify(CATEGORIES));
       }
     } catch (e) {
       console.error('Error loading products/categories:', e);
@@ -84,11 +85,11 @@ const AdminDashboard: React.FC = () => {
 
   // Save products and categories to localStorage
   useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
+    localStorage.setItem('hill_basket_products_v2', JSON.stringify(products));
   }, [products]);
 
   useEffect(() => {
-    localStorage.setItem('categories', JSON.stringify(categories));
+    localStorage.setItem('hill_basket_categories_v2', JSON.stringify(categories));
   }, [categories]);
 
   // Load users from localStorage
