@@ -63,7 +63,9 @@ const AdminDashboard: React.FC = () => {
       if (Array.isArray(savedProducts) && savedProducts.length > 0) {
         setProducts(savedProducts);
       } else {
+        // If no products in storage, use INITIAL_PRODUCTS and save them
         setProducts(INITIAL_PRODUCTS);
+        localStorage.setItem('products', JSON.stringify(INITIAL_PRODUCTS));
       }
 
       const savedCategories = JSON.parse(localStorage.getItem('categories') || '[]');
@@ -71,6 +73,7 @@ const AdminDashboard: React.FC = () => {
         setCategories(savedCategories);
       } else {
         setCategories(CATEGORIES);
+        localStorage.setItem('categories', JSON.stringify(CATEGORIES));
       }
     } catch (e) {
       console.error('Error loading products/categories:', e);
