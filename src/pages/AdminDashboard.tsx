@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { LayoutDashboard, ShoppingBag, Users, Ticket, LifeBuoy, TrendingUp, DollarSign, Package, AlertCircle, Plus, Edit2, Trash2, CheckCircle2, Search, Filter, ArrowUpRight, ArrowDownRight, MoreHorizontal, Sun, Moon, LogOut, Star, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, Ticket, LifeBuoy, TrendingUp, DollarSign, Package, AlertCircle, Plus, Edit2, Trash2, CheckCircle2, Search, Filter, ArrowUpRight, ArrowDownRight, MoreHorizontal, Sun, Moon, LogOut, Star, MessageSquare, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { INITIAL_PRODUCTS, MOCK_ADMIN_USERS, MOCK_ADMIN_COUPONS, MOCK_ADMIN_ORDERS } from '../utils/mockData';
+import { INITIAL_PRODUCTS, MOCK_ADMIN_USERS, MOCK_ADMIN_COUPONS, MOCK_ADMIN_ORDERS, CATEGORIES } from '../utils/mockData';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -16,8 +16,21 @@ const AdminDashboard: React.FC = () => {
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
   const [tickets, setTickets] = useState([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [coupons, setCoupons] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Coupon Modal State
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+  const [couponForm, setCouponForm] = useState({
+    code: '',
+    discount: '',
+    type: 'Percentage',
+    category: 'All',
+    expiry: '',
+    usage: '0/100',
+    status: 'Active'
+  });
+
   // Clear search query when switching tabs to prevent blank screens due to active filters
   useEffect(() => {
     setSearchQuery('');
@@ -45,6 +58,26 @@ const AdminDashboard: React.FC = () => {
       setUsers([]);
     }
   }, []);
+
+  // Load coupons from localStorage
+  useEffect(() => {
+    try {
+      const savedCoupons = JSON.parse(localStorage.getItem('admin_coupons') || '[]');
+      if (Array.isArray(savedCoupons) && savedCoupons.length > 0) {
+        setCoupons(savedCoupons);
+      } else {
+        setCoupons(MOCK_ADMIN_COUPONS);
+      }
+    } catch (e) {
+      console.error('Error loading coupons:', e);
+      setCoupons(MOCK_ADMIN_COUPONS);
+    }
+  }, []);
+
+  // Save coupons to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('admin_coupons', JSON.stringify(coupons));
+  }, [coupons]);
   
   useEffect(() => {
     try {
@@ -84,6 +117,31 @@ const AdminDashboard: React.FC = () => {
     { id: 'coupons', label: 'Coupons', icon: <Ticket size={20} /> },
     { id: 'tickets', label: 'Support Tickets', icon: <LifeBuoy size={20} /> },
   ];
+
+  const handleCreateCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newCoupon = {
+      id: 'c' + Date.now(),
+      ...couponForm
+    };
+    setCoupons(prev => [newCoupon, ...prev]);
+    setIsCouponModalOpen(false);
+    setCouponForm({
+      code: '',
+      discount: '',
+      type: 'Percentage',
+      category: 'All',
+      expiry: '',
+      usage: '0/100',
+      status: 'Active'
+    });
+  };
+
+  const handleDeleteCoupon = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this coupon?')) {
+      setCoupons(prev => prev.filter(c => c.id !== id));
+    }
+  };
 
   const handleDeleteProduct = (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -497,15 +555,18 @@ const AdminDashboard: React.FC = () => {
             >
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-3xl font-poppins font-black">Coupons & Offers</h3>
-                <button className="btn-primary py-3 px-6 flex items-center space-x-2 shadow-xl">
+                <button 
+                  onClick={() => setIsCouponModalOpen(true)}
+                  className="btn-primary py-3 px-6 flex items-center space-x-2 shadow-xl"
+                >
                   <Plus size={20} />
                   <span>Create Coupon</span>
                 </button>
               </div>
 
-              {MOCK_ADMIN_COUPONS.length > 0 ? (
+              {coupons.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                  {MOCK_ADMIN_COUPONS.map((coupon) => (
+                  {coupons.map((coupon) => (
                     <GlassCard key={coupon.id} className="p-4 md:p-6 border-2 border-dashed border-gray-200 dark:border-gray-800 relative group overflow-hidden">
                       <div className="absolute top-0 right-0 p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${coupon.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
@@ -515,6 +576,7 @@ const AdminDashboard: React.FC = () => {
                       <div className="mb-6">
                         <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">{coupon.type}</p>
                         <h4 className="text-3xl font-poppins font-black text-primary">{coupon.code}</h4>
+                        <p className="text-xs font-bold text-gray-500 mt-1">Category: {coupon.category}</p>
                       </div>
                       <div className="space-y-3 mb-8">
                         <div className="flex justify-between text-sm font-bold">
@@ -534,7 +596,10 @@ const AdminDashboard: React.FC = () => {
                         <button className="flex-1 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
                           Edit
                         </button>
-                        <button className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                        <button 
+                          onClick={() => handleDeleteCoupon(coupon.id)}
+                          className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                        >
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -620,6 +685,116 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-gray-500 max-w-sm mx-auto font-medium">Everything is under control! Your customers are currently happy with the service.</p>
                 </GlassCard>
               )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Coupon Creation Modal */}
+        <AnimatePresence>
+          {isCouponModalOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-lg"
+              >
+                <GlassCard className="p-8 shadow-2xl relative">
+                  <button
+                    onClick={() => setIsCouponModalOpen(false)}
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                  
+                  <h2 className="text-2xl font-poppins font-black mb-6">Create New Coupon</h2>
+                  
+                  <form onSubmit={handleCreateCoupon} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Coupon Code</label>
+                      <input
+                        type="text"
+                        required
+                        className="input-field py-3 font-bold uppercase tracking-widest"
+                        placeholder="SUMMER25"
+                        value={couponForm.code}
+                        onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Discount Type</label>
+                        <select
+                          className="input-field py-3 font-bold"
+                          value={couponForm.type}
+                          onChange={(e) => setCouponForm({ ...couponForm, type: e.target.value })}
+                        >
+                          <option value="Percentage">Percentage (%)</option>
+                          <option value="Fixed Amount">Fixed Amount (₹)</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Value</label>
+                        <input
+                          type="text"
+                          required
+                          className="input-field py-3 font-bold"
+                          placeholder={couponForm.type === 'Percentage' ? '20%' : '₹100'}
+                          value={couponForm.discount}
+                          onChange={(e) => setCouponForm({ ...couponForm, discount: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Category</label>
+                      <select
+                        className="input-field py-3 font-bold"
+                        value={couponForm.category}
+                        onChange={(e) => setCouponForm({ ...couponForm, category: e.target.value })}
+                      >
+                        <option value="All">All Categories</option>
+                        {CATEGORIES.map(cat => (
+                          <option key={cat.id} value={cat.name}>{cat.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Expiry Date</label>
+                      <input
+                        type="date"
+                        required
+                        className="input-field py-3 font-bold"
+                        value={couponForm.expiry}
+                        onChange={(e) => setCouponForm({ ...couponForm, expiry: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="pt-4 flex justify-end space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setIsCouponModalOpen(false)}
+                        className="px-6 py-3 font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn-primary px-8 py-3 font-bold"
+                      >
+                        Create Coupon
+                      </button>
+                    </div>
+                  </form>
+                </GlassCard>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
