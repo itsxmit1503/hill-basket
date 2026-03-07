@@ -128,25 +128,54 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const applyCoupon = (code: string) => {
     const coupons = JSON.parse(localStorage.getItem('admin_coupons') || '[]');
-    const coupon = coupons.find((c: any) => c.code === code.toUpperCase() && c.status === 'Active');
+    const normalizedCode = code.trim().toUpperCase();
+    
+    console.log('Attempting to apply coupon:', normalizedCode);
+    console.log('Available coupons:', coupons);
+
+    const coupon = coupons.find((c: any) => c.code.trim().toUpperCase() === normalizedCode && c.status === 'Active');
 
     if (!coupon) {
       setCouponDiscount(0);
       return { success: false, message: 'Invalid or expired coupon code', discount: 0 };
     }
 
+    // Check expiry
+    if (coupon.expiry) {
+      const expiryDate = new Date(coupon.expiry);
+      expiryDate.setHours(23, 59, 59, 999); // Set to end of expiry day
+      
+      if (expiryDate < new Date()) {
+        setCouponDiscount(0);
+        return { success: false, message: 'Coupon has expired', discount: 0 };
+      }
+    }
+
     let discount = 0;
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    let applicableSubtotal = 0;
+
+    if (!coupon.category || coupon.category === 'All') {
+      applicableSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    } else {
+      applicableSubtotal = items
+        .filter(item => item.category === coupon.category)
+        .reduce((sum, item) => sum + item.price * item.quantity, 0);
+        
+      if (applicableSubtotal === 0) {
+        setCouponDiscount(0);
+        return { success: false, message: `Coupon applicable only on ${coupon.category}`, discount: 0 };
+      }
+    }
 
     if (coupon.type === 'Percentage') {
-      const percentage = parseFloat(coupon.discount.replace('%', ''));
-      discount = (subtotal * percentage) / 100;
+      const percentage = parseFloat(coupon.discount.replace(/[^0-9.]/g, ''));
+      discount = (applicableSubtotal * percentage) / 100;
     } else {
       discount = parseFloat(coupon.discount.replace(/[^0-9.]/g, ''));
     }
 
-    // Ensure discount doesn't exceed total
-    discount = Math.min(discount, subtotal);
+    // Ensure discount doesn't exceed applicable total
+    discount = Math.min(discount, applicableSubtotal);
     
     setCouponDiscount(discount);
     return { success: true, message: 'Coupon applied successfully!', discount };

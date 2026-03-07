@@ -122,7 +122,8 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     const newCoupon = {
       id: 'c' + Date.now(),
-      ...couponForm
+      ...couponForm,
+      code: couponForm.code.trim().toUpperCase()
     };
     setCoupons(prev => [newCoupon, ...prev]);
     setIsCouponModalOpen(false);

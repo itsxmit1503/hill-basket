@@ -158,7 +158,7 @@ const CartPage: React.FC = () => {
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 ml-1">Promo Code</label>
               <div className="relative">
-                <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner overflow-hidden">
+                <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner">
                   <div className="p-3 text-gray-400 flex items-center justify-center pl-4">
                     <Ticket size={20} />
                   </div>
@@ -167,11 +167,11 @@ const CartPage: React.FC = () => {
                     placeholder="Enter code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    className="bg-transparent border-none focus:ring-0 flex-1 px-2 font-bold uppercase tracking-widest text-gray-800 dark:text-white placeholder:normal-case placeholder:tracking-normal placeholder:font-medium"
+                    className="bg-transparent border-none focus:ring-0 flex-1 px-2 font-bold uppercase tracking-widest text-gray-800 dark:text-white placeholder:normal-case placeholder:tracking-normal placeholder:font-medium min-w-0"
                   />
                   <button 
                     onClick={handleApplyCoupon}
-                    className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary-dark transition-all shadow-md m-1 shrink-0"
+                    className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary-dark transition-all shadow-md m-1 shrink-0 whitespace-nowrap"
                   >
                     Apply
                   </button>
