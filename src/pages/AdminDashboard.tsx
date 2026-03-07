@@ -31,6 +31,11 @@ const AdminDashboard: React.FC = () => {
     status: 'Active'
   });
 
+  // Ticket Response Modal State
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [ticketResponse, setTicketResponse] = useState('');
+
   // Clear search query when switching tabs to prevent blank screens due to active filters
   useEffect(() => {
     setSearchQuery('');
@@ -148,6 +153,41 @@ const AdminDashboard: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       setProducts(products.filter(p => p.id !== id));
     }
+  };
+
+  const handleResolveTicket = (id: string) => {
+    const updatedTickets = tickets.map((t: any) => 
+      t.id === id ? { ...t, status: 'Resolved' } : t
+    );
+    setTickets(updatedTickets);
+    localStorage.setItem('support_tickets', JSON.stringify(updatedTickets));
+  };
+
+  const handleOpenTicketResponse = (ticket: any) => {
+    setSelectedTicket(ticket);
+    setTicketResponse('');
+    setIsTicketModalOpen(true);
+  };
+
+  const handleSubmitResponse = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTicket) return;
+
+    // In a real app, this would send an email to the user
+    console.log(`Sending response to ${selectedTicket.email}: ${ticketResponse}`);
+    
+    const updatedTickets = tickets.map((t: any) => 
+      t.id === selectedTicket.id ? { ...t, status: 'Resolved', response: ticketResponse } : t
+    );
+    
+    setTickets(updatedTickets);
+    localStorage.setItem('support_tickets', JSON.stringify(updatedTickets));
+    
+    setIsTicketModalOpen(false);
+    setSelectedTicket(null);
+    setTicketResponse('');
+    
+    alert('Response sent successfully!');
   };
 
   const toggleStock = (id: string) => {
@@ -666,11 +706,17 @@ const AdminDashboard: React.FC = () => {
                       </div>
 
                       <div className="flex gap-4">
-                        <button className="btn-primary flex-1 py-3 text-sm font-black flex items-center justify-center space-x-2">
+                        <button 
+                          onClick={() => handleOpenTicketResponse(ticket)}
+                          className="btn-primary flex-1 py-3 text-sm font-black flex items-center justify-center space-x-2"
+                        >
                           <MessageSquare size={16} />
                           <span>Respond</span>
                         </button>
-                        <button className="p-3 bg-green-500/10 text-green-500 rounded-xl hover:bg-green-500 hover:text-white transition-all border border-green-500/20">
+                        <button 
+                          onClick={() => handleResolveTicket(ticket.id)}
+                          className="p-3 bg-green-500/10 text-green-500 rounded-xl hover:bg-green-500 hover:text-white transition-all border border-green-500/20"
+                        >
                           <CheckCircle2 size={20} />
                         </button>
                       </div>
@@ -686,6 +732,72 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-gray-500 max-w-sm mx-auto font-medium">Everything is under control! Your customers are currently happy with the service.</p>
                 </GlassCard>
               )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Ticket Response Modal */}
+        <AnimatePresence>
+          {isTicketModalOpen && selectedTicket && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-lg"
+              >
+                <GlassCard className="p-8 shadow-2xl relative">
+                  <button
+                    onClick={() => setIsTicketModalOpen(false)}
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                  
+                  <h2 className="text-2xl font-poppins font-black mb-2">Respond to Ticket</h2>
+                  <p className="text-sm text-gray-500 font-bold mb-6">Replying to {selectedTicket.name}</p>
+                  
+                  <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl mb-6">
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Customer Message</p>
+                    <p className="text-sm italic text-gray-600 dark:text-gray-300">"{selectedTicket.message}"</p>
+                  </div>
+
+                  <form onSubmit={handleSubmitResponse} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">Your Response</label>
+                      <textarea
+                        required
+                        className="input-field py-3 font-bold min-h-[150px] resize-none"
+                        placeholder="Type your response here..."
+                        value={ticketResponse}
+                        onChange={(e) => setTicketResponse(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="pt-4 flex justify-end space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setIsTicketModalOpen(false)}
+                        className="px-6 py-3 font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn-primary px-8 py-3 font-bold flex items-center space-x-2"
+                      >
+                        <span>Send Response</span>
+                        <MessageSquare size={18} />
+                      </button>
+                    </div>
+                  </form>
+                </GlassCard>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
